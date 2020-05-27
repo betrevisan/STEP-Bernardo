@@ -97,3 +97,15 @@
 .contact-icon {
     width: 50px;
 }
+
+.fav-books {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.fav-books img {
+    margin: 10px;
+    max-height: 200px;
+    max-width: 200px;
+}
