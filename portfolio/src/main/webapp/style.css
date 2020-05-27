@@ -61,7 +61,7 @@
   margin-top: 60px;
 }
 
-#profile-picture {
+#profile-picture, #current-book {
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
