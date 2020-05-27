@@ -1,3 +1,5 @@
+<!--Referenced to https://www.w3schools.com/html/default.asp-->
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -7,9 +9,15 @@
     <script src="script.js"></script>
   </head>
   <body>
+    <ul id="nav-bar">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+    </ul>
+
     <div id="content">
       <h1>Bernardo's Portfolio</h1>
+
       <p>This is Bernardo's portfolio.</p>
+
       <p>A message from Bernardo:</p>
       <blockquote>
           "Hi, everyone! It is great to have you here! My name is Bernardo Eilert Trevisan and I am currently 20 years old. 
@@ -18,10 +26,13 @@
           Computer Science. I am extremely excited to be working as a STEP intern for Google this Summer and cannot wait to see this portfolio grow 
           as I make my way through the upcoming projects."
       </blockquote>
+
       <img id="profile-picture" src="images/bernardo.jpg"/>
+
       <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
       <button onclick="addRandomAMSong()">Find</button>
       <div id="song-container"></div>
+
     </div>
   </body>
 </html>
