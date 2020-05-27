@@ -4,6 +4,18 @@
   width: 650px;
 }
 
-#greeting-container {
+#profile-picture {
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  max-height: 650px;
+  max-width: 650px;
+}
+
+#profile-picture:hover {
+  border: thick solid black;
+}
+
+#song-container {
   margin-top: 20px;
 }
