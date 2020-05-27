@@ -13,6 +13,11 @@
     float: right;
 }
 
+.nav-title {
+    float: left;
+    font-weight: bold;
+}
+
 .nav-link {
     display: block;
     text-align: center;
