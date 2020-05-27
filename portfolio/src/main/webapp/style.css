@@ -77,8 +77,16 @@
   margin-top: 20px;
 }
 
+#contact {
+    text-align: center;
+}
+
 #contact-icons {
     list-style-type: none;
+}
+
+#contact-icons li {
+    display: inline;
 }
 
 .contact-link {
