@@ -22,6 +22,11 @@
         background-color: #002080;
         color: #ffffff;
     }
+
+    .bg-3 {
+        background-color: #ffffff;
+        color: #555555;
+    }
     </style>
 
   </head>
@@ -59,12 +64,14 @@
         </blockquote>
     </div>
 
+    <div class="container-fluid bg-3 text-center">
+        <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
+        <button onclick="addRandomAMSong()">Find</button>
+        <div id="song-container"></div>
+    </div>
+
     <div id="content">
       
-      <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
-      <button onclick="addRandomAMSong()">Find</button>
-      <div id="song-container"></div>
-
     </div>
   </body>
 </html>
