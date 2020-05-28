@@ -73,7 +73,7 @@
     width: 50px;
 }
 
-.fav-books {
+.gallery {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
