@@ -76,3 +76,24 @@
 #song-container {
   margin-top: 20px;
 }
+
+#contact {
+    text-align: center;
+}
+
+#contact-icons {
+    list-style-type: none;
+}
+
+#contact-icons li {
+    display: inline;
+}
+
+.contact-link {
+    padding: 20px;
+    width: 50px;
+}
+
+.contact-icon {
+    width: 50px;
+}
