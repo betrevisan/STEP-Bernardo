@@ -21,6 +21,11 @@
     padding-bottom: 70px;
 }
 
+.container-fluid * {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
 .img-circle {
     width: 25%;
 }
