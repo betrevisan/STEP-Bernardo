@@ -1,12 +1,14 @@
 <!--Referenced to https://www.w3schools.com/html/default.asp-->
 <!--Referenced to https://www.w3schools.com/bootstrap/bootstrap_theme_me.asp-->
+<!--Referenced to https://developers.google.com/maps/documentation/javascript/examples-->
+
 
 
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Contact</title>
+    <title>Background</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
@@ -35,9 +37,34 @@
         </div>
     </nav>
 
+    <div class="container-fluid bg-3 text-center">
+        <div id="map">
+
+        </div>
+    </div>
+
+    <script>
+
+      // This example displays a marker at the center of Australia.
+      // When the user clicks the marker, an info window opens.
+
+      function initMap() {
+        var poa = {lat: -30.035, lng: -51.218};
+        var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 4,
+          center: poa
+        });
+      }      
+    </script>
+
+
     <footer class="container-fluid bg-2 text-center">
         <p>Referenced to <a href="https://www.w3schools.com">www.w3schools.com</a> for this Bootstrap Theme</p>
     </footer>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4qpR2KTqAMI_rXlPi93WtandWiZex-Jk&callback=initMap">
+    </script>
 
   </body>
 </html>

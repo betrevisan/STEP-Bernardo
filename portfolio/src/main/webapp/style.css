@@ -84,3 +84,8 @@
     max-height: 200px;
     max-width: 200px;
 }
+
+#map {
+    height: 400px;
+    width: 75%;
+}
