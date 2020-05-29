@@ -1,13 +1,12 @@
 /*Referenced to https://www.w3schools.com/css/default.asp*/
 
-
 .bg-1 {
-    background-color: #fff000;
+    background-color: #F1B900;
     color: #ffffff;
 }
 
 .bg-2 {
-    background-color: #002080;
+    background-color: #0C005B;
     color: #ffffff;
 }
 
@@ -21,8 +20,13 @@
     padding-bottom: 70px;
 }
 
+.margin *{
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
 .img-circle {
-    width: 25%;
+    width: 20%;
 }
 
 .navbar {
@@ -36,7 +40,7 @@
 }
 
 .navbar-nav li a:hover {
-    color: #fff000 !important;
+    color: #0C005B !important;
 }
 
 #current-book {
@@ -88,4 +92,9 @@
 #map {
     height: 600px;
     width: 100%;
+    color: #555555;
+}
+
+p {
+    font-size: large;
 }

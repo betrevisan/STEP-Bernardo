@@ -31,7 +31,7 @@ function initMap() {
     var boston = {lat: 42.360, lng: -71.058};
 
     var map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 4,
+        zoom: 2,
         center: poa
     });
 
@@ -73,7 +73,7 @@ function initMap() {
     '</div>'+
     '<h1 id="firstHeading" class="firstHeading">Treviso</h1>'+
     '<div id="bodyContent">'+
-    '<p><b>Treviso</b> is the city my ancestor emigrated from when they moved to  Brazil.</p>'+
+    '<p><b>Treviso</b> is the city my ancestors emigrated from when they moved to  Brazil.</p>'+
     '<p>For more, visit <a href="https://en.wikipedia.org/wiki/Treviso">'+
     'https://en.wikipedia.org/wiki/Treviso</a>.</p>'+
     '</div>'+

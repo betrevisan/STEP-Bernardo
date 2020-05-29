@@ -7,10 +7,7 @@
     <meta charset="UTF-8">
     <title>Bernardo's Portfolio</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-default">
@@ -33,30 +30,62 @@
         </div>
     </nav>
 
-    <div class="container-fluid bg-1 text-center">
-        <h3>Bernardo's Portfolio</h3>
+    <div class="container-fluid bg-1 text-center margin">
+        <h3 style="font-weight:bolder;">Bernardo's Portfolio</h3>
         <img class="img-circle" src="images/bernardo.jpg" alt="Bernardo">
-        <h3>Welcome!</h3>
+        <h3 style="font-weight:bolder;">Welcome!</h3>
     </div>
 
-    <div class="container-fluid bg-2 text-center">
+    <div class="container-fluid bg-2 text-center margin">
         <h3>A message from Bernardo:</h3>
-        <blockquote>
-          "Hi, everyone! It is great to have you here! My name is Bernardo Eilert Trevisan and I am currently 20 years old. 
-          I was born in a city located in the south of Brazil called <a href="https://en.wikipedia.org/wiki/Porto_Alegre" target="_blank">Porto Alegre</a>. I lived there with my parents and my brother until I graduated from High School.
-          After that, I moved to Connecticut to begin my undergraduate studies at Yale University. As of today, I am a rising junior majoring in 
-          Computer Science. I am extremely excited to be working as a STEP intern for Google this Summer and cannot wait to see this portfolio grow 
-          as I make my way through the upcoming projects."
+        <blockquote class="blockquote text-center">
+            <p class="mb-0">
+                "Hi, everyone! It is great to have you here! My name is Bernardo Eilert Trevisan and I am currently 20 years old. 
+                I was born in a city located in the south of Brazil called Porto Alegre. I lived there with my parents and my brother until I graduated from High School.
+                After that, I moved to Connecticut to begin my undergraduate studies at Yale University. As of today, I am a rising junior majoring in 
+                Computer Science. I am extremely excited to be working as a STEP intern for Google this Summer and cannot wait to see this portfolio grow 
+                as I make my way through the upcoming projects."
+            </p>
         </blockquote>
     </div>
 
     <div class="container-fluid bg-3 text-center">
-        
+        <h3>Here's what you can find in my portfolio:</h3>
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Contact</h3>
+                <p>Want to get in touch with me? Click the button below to see my contact information.
+                </p>
+                <a href="contact.html">
+                    <button class="btn btn-default btn-lg" ></span>Contact</button>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <h3>Background</h3>
+                <p>I have created an interactive map for you to explore some of the places I have been to and that have somehow influenced
+                    me to become who I am today. Check it out!
+                </p>
+                <a href="background.html">
+                    <button class="btn btn-default btn-lg" ></span>Background</button>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <h3>Interests</h3>
+                <p>I have compiled three areas that I am very interested in and that, at the same time, can provide you with further insight
+                    into who I am. Please reach out if you see anything that resonates with you! I love talking about these things.
+                </p>
+                <a href="interests.html">
+                    <button class="btn btn-default btn-lg" ></span>Interests</button>
+                </a>
+            </div>
+        </div>
     </div>
 
     <footer class="container-fluid bg-2 text-center">
         <p>Referenced to <a href="https://www.w3schools.com">www.w3schools.com</a> for this Bootstrap Theme</p>
     </footer>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   </body>
 </html>
