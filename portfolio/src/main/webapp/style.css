@@ -73,13 +73,13 @@
     width: 50px;
 }
 
-.fav-books {
+.gallery {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
-.fav-books img {
+.gallery img {
     margin: 10px;
     max-height: 200px;
     max-width: 200px;

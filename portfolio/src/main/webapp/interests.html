@@ -1,0 +1,156 @@
+<!--Referenced to https://www.w3schools.com/html/default.asp-->
+<!--Referenced to https://www.w3schools.com/bootstrap/bootstrap_theme_me.asp-->
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Interests</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Bernardo's Portfolio</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="contact.html">CONTACT</a></li>
+                <li><a href="background.html">BACKGROUND</a></li>
+                <li><a href="interests.html">INTERESTS</a></li>
+            </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid bg-1 text-center">
+        <div class="row">
+            <div class="col-sm-4">
+                <h3>Books</h3>
+                <p>Reading is one of my favorite pastimes. I love discussing books and sharing recommendations, especially during under the current social
+                    isolation policies. Click the button below to find out more about my reading habits!
+                </p>
+                <a href="#books">
+                    <button class="btn btn-default btn-lg" ><span class="glyphicon glyphicon-book"></span> Go</button>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <h3>Music</h3>
+                <p>Similarly to books, I am a fan of music and enjoy talking about it with friends. I believe music can provide people
+                    with a very distinct perspective of things. With that being said, I hope the music I share with you here can 
+                    give you an insight into who I am. Click the button below!
+                </p>
+                <a href="#music">
+                    <button class="btn btn-default btn-lg" ><span class="glyphicon glyphicon-music"></span> Go</button>
+                </a>
+            </div>
+            <div class="col-sm-4">
+                <h3>Photography</h3>
+                <p>Ever since I discovered my father's camera lying unused in his office, I have adopted photography as a hobby.
+                    I love going outside to take photos, be it by myself or with friends. I have compiled a gallery of some of the
+                    photos I have taken in the past year. Some very important moments of my life are attached these pictures.
+                    Check them out by clicking the button below!
+                </p>
+                <a href="#photography">
+                    <button class="btn btn-default btn-lg" ><span class="glyphicon glyphicon-camera"></span> Go</button>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid bg-3 text-center">
+        <h3 id="books">Books</h3>
+
+        <h4>What I am currently reading:</h4>
+
+        <p>I am currently reading <a href="https://en.wikipedia.org/wiki/The_Scarlet_Letter" target="_blank">The Scarlet Letter</a> by 
+        Nathaniel Hawthorne</p>
+
+        <img id="current-book" src="images/scarletLetter.jpg"/>
+
+        <h4>My favorite books:</h4>
+        <div class="gallery">
+            <a href="images/alchemist.jpg" target="_blank"><img src="images/alchemist.jpg"/></a>
+            <a href="images/blindness.jpg" target="_blank"><img src="images/blindness.jpg"/></a>
+            <a href="images/continente.jpg" target="_blank"><img src="images/continente.jpg"/></a>
+            <a href="images/hp.jpg" target="_blank"><img src="images/hp.jpg"/></a>
+            <a href="images/perks.jpg" target="_blank"><img src="images/perks.jpg"/></a>
+            <a href="images/persuasion.jpeg" target="_blank"><img src="images/persuasion.jpeg"/></a>
+            <a href="images/poe.jpg" target="_blank"><img src="images/poe.jpg"/></a>
+            <a href="images/saturday.jpg" target="_blank"><img src="images/saturday.jpg"/></a>
+            <a href="images/cortico.jpg" target="_blank"><img src="images/cortico.jpg"/></a>
+        </div>
+
+        <h4>Find out more about my reading habits at my Goodreads profile:</h4>
+
+        <a class="contact-link" href="https://www.goodreads.com/user/show/115151869-bernardo-eilert-trevisan" target="_blank"><img class="contact-icon" src="images/goodreads.png"></a>
+    </div>
+
+    <div class="container-fluid bg-3 text-center">
+        <h3 id="music">Music</h3>
+        
+        <h4>A playlist for you</h4>
+        <p>Scan the Spotify QR code below to access my playlist with Brazilian songs. This is one of my favorite playlists because it reminds me so much of home.
+            I hope this playlist can also serve as an introduction to what Brazilian music sounds like.
+        </p>
+        <img id="current-book" src="images/qr.jpeg"/>
+
+        <h4>Favorite band</h4>
+        <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
+        <button class="btn btn-default btn-lg" onclick="addRandomAMSong()"><span class="glyphicon glyphicon-music"></span> Find</button>
+        <div id="song-container"></div>
+    </div>
+
+    <div class="container-fluid bg-3 text-center">
+        <h3 id="photography">Photography</h3>
+
+        <h4>Here are some photographs I've taken over the years</h4>
+        <p>Click on any of the photographs in this gallery to be able to see them on a larger scale in a new tab.</p>
+        <div class="gallery">
+            <a href="images/1.jpg" target="_blank"><img src="images/1.jpg"/></a>
+            <a href="images/2.jpg" target="_blank"><img src="images/2.jpg"/></a>
+            <a href="images/3.jpg" target="_blank"><img src="images/3.jpg"/></a>
+            <a href="images/4.jpg" target="_blank"><img src="images/4.jpg"/></a>
+            <a href="images/5.jpg" target="_blank"><img src="images/5.jpg"/></a>
+            <a href="images/6.jpg" target="_blank"><img src="images/6.jpg"/></a>
+            <a href="images/7.jpg" target="_blank"><img src="images/7.jpg"/></a>
+            <a href="images/8.jpg" target="_blank"><img src="images/8.jpg"/></a>
+            <a href="images/9.jpg" target="_blank"><img src="images/9.jpg"/></a>
+            <a href="images/10.jpg" target="_blank"><img src="images/10.jpg"/></a>
+            <a href="images/11.jpg" target="_blank"><img src="images/11.jpg"/></a>
+            <a href="images/12.jpg" target="_blank"><img src="images/12.jpg"/></a>
+            <a href="images/13.jpg" target="_blank"><img src="images/13.jpg"/></a>
+            <a href="images/14.jpg" target="_blank"><img src="images/14.jpg"/></a>
+            <a href="images/15.jpg" target="_blank"><img src="images/15.jpg"/></a>
+            <a href="images/16.jpg" target="_blank"><img src="images/16.jpg"/></a>
+            <a href="images/17.jpg" target="_blank"><img src="images/17.jpg"/></a>
+            <a href="images/18.jpg" target="_blank"><img src="images/18.jpg"/></a>
+            <a href="images/19.jpg" target="_blank"><img src="images/19.jpg"/></a>
+            <a href="images/20.jpg" target="_blank"><img src="images/20.jpg"/></a>
+            <a href="images/21.jpg" target="_blank"><img src="images/21.jpg"/></a>
+            <a href="images/22.jpg" target="_blank"><img src="images/22.jpg"/></a>
+            <a href="images/23.jpg" target="_blank"><img src="images/23.jpg"/></a>
+            <a href="images/24.jpg" target="_blank"><img src="images/24.jpg"/></a>
+            <a href="images/25.jpg" target="_blank"><img src="images/25.jpg"/></a>
+            <a href="images/26.jpg" target="_blank"><img src="images/26.jpg"/></a>
+            <a href="images/27.jpg" target="_blank"><img src="images/27.jpg"/></a>
+            <a href="images/28.jpg" target="_blank"><img src="images/28.jpg"/></a>
+        </div>
+    </div>
+
+    <footer class="container-fluid bg-2 text-center">
+        <p>Referenced to <a href="https://www.w3schools.com">www.w3schools.com</a> for this Bootstrap Theme</p>
+    </footer>
+
+  </body>
+</html>
