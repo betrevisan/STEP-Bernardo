@@ -1,67 +1,45 @@
 /*Referenced to https://www.w3schools.com/css/default.asp*/
 
-#nav-bar {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background-color: #CDCDCD;
+
+.bg-1 {
+    background-color: #fff000;
+    color: #ffffff;
 }
 
-.nav-item {
-    float: right;
+.bg-2 {
+    background-color: #002080;
+    color: #ffffff;
 }
 
-.nav-title {
-    float: left;
-    font-weight: bold;
+.bg-3 {
+    background-color: #ffffff;
+    color: #555555;
 }
 
-.nav-link {
-    display: block;
-    text-align: center;
-    padding-left: 50px;
-    padding-right: 50px;
-    padding-top: 20px;
-    padding-bottom: 20px;
+.container-fluid {
+    padding-top: 70px;
+    padding-bottom: 70px;
 }
 
-.dropdown {
-  display: inline-block;
-  float: right;
+.img-circle {
+    width: 25%;
 }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+.navbar {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    font-size: 12px;
+    letter-spacing: 5px;
 }
 
-.dropdown:hover .dropdown-content {
-  display: block;
+.navbar-nav li a:hover {
+    color: #fff000 !important;
 }
 
-.dropdown-content .navlink {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-}
-
-#content {
-  margin-left: auto;
-  margin-right: auto;
-  width: 650px;
-  margin-top: 60px;
-}
-
-#profile-picture, #current-book {
+#current-book {
   justify-content: center;
   margin-left: auto;
   margin-right: auto;
@@ -69,9 +47,6 @@
   max-width: 650px;
 }
 
-#profile-picture:hover {
-  border: thick solid black;
-}
 
 #song-container {
   margin-top: 20px;

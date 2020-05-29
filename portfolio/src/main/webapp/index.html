@@ -1,49 +1,64 @@
 <!--Referenced to https://www.w3schools.com/html/default.asp-->
+<!--Referenced to https://www.w3schools.com/bootstrap/bootstrap_theme_me.asp-->
 
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
     <title>Bernardo's Portfolio</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
   <body>
-    <div>  
-        <ul id="nav-bar">
-            <li class="nav-title"><a class="nav-link" href="index.html">Bernardo's Portfolio</a></li>
-            <li class="dropdown" class="nav-item">
-                <a href="javascript:void(0)" class="nav-link">Interests</a>
-                <div class="dropdown-content">
-                    <a class="nav-link" href="books.html">Books</a>
-                    <a class="nav-link" href="music.html">Music</a>
-                </div>
-            </li>
-            <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
-            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-        </ul>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="index.html">Bernardo's Portfolio</a>
+            </div>
+            <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="contact.html">CONTACT</a></li>
+                <li><a href="#">BACKGROUND</a></li>
+                <li><a href="#">INTERESTS</a></li>
+            </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid bg-1 text-center">
+        <h3>Bernardo's Portfolio</h3>
+        <img class="img-circle" src="images/bernardo.jpg" alt="Bernardo">
+        <h3>Welcome!</h3>
     </div>
 
-    <div id="content">
-      <h1>Bernardo's Portfolio</h1>
-
-      <p>This is Bernardo's portfolio.</p>
-
-      <p>A message from Bernardo:</p>
-      <blockquote>
+    <div class="container-fluid bg-2 text-center">
+        <h3>A message from Bernardo:</h3>
+        <blockquote>
           "Hi, everyone! It is great to have you here! My name is Bernardo Eilert Trevisan and I am currently 20 years old. 
           I was born in a city located in the south of Brazil called <a href="https://en.wikipedia.org/wiki/Porto_Alegre" target="_blank">Porto Alegre</a>. I lived there with my parents and my brother until I graduated from High School.
           After that, I moved to Connecticut to begin my undergraduate studies at Yale University. As of today, I am a rising junior majoring in 
           Computer Science. I am extremely excited to be working as a STEP intern for Google this Summer and cannot wait to see this portfolio grow 
           as I make my way through the upcoming projects."
-      </blockquote>
-
-      <img id="profile-picture" src="images/bernardo.jpg"/>
-
-      <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
-      <button onclick="addRandomAMSong()">Find</button>
-      <div id="song-container"></div>
-
+        </blockquote>
     </div>
+
+    <div class="container-fluid bg-3 text-center">
+        <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
+        <button class="btn btn-default btn-lg" onclick="addRandomAMSong()"><span class="glyphicon glyphicon-music"></span> Find</button>
+        <div id="song-container"></div>
+    </div>
+
+    <footer class="container-fluid bg-2 text-center">
+        <p>Referenced to <a href="https://www.w3schools.com">www.w3schools.com</a> for this Bootstrap Theme</p>
+    </footer>
+
   </body>
 </html>
