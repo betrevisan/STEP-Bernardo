@@ -1,16 +1,20 @@
 <!--Referenced to https://www.w3schools.com/html/default.asp-->
 <!--Referenced to https://www.w3schools.com/bootstrap/bootstrap_theme_me.asp-->
+<!--Referenced to https://developers.google.com/maps/documentation/javascript/examples-->
+
+
 
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Bernardo's Portfolio</title>
+    <title>Background</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="map.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-default">
@@ -33,32 +37,24 @@
         </div>
     </nav>
 
-    <div class="container-fluid bg-1 text-center">
-        <h3>Bernardo's Portfolio</h3>
-        <img class="img-circle" src="images/bernardo.jpg" alt="Bernardo">
-        <h3>Welcome!</h3>
-    </div>
-
-    <div class="container-fluid bg-2 text-center">
-        <h3>A message from Bernardo:</h3>
-        <blockquote>
-          "Hi, everyone! It is great to have you here! My name is Bernardo Eilert Trevisan and I am currently 20 years old. 
-          I was born in a city located in the south of Brazil called <a href="https://en.wikipedia.org/wiki/Porto_Alegre" target="_blank">Porto Alegre</a>. I lived there with my parents and my brother until I graduated from High School.
-          After that, I moved to Connecticut to begin my undergraduate studies at Yale University. As of today, I am a rising junior majoring in 
-          Computer Science. I am extremely excited to be working as a STEP intern for Google this Summer and cannot wait to see this portfolio grow 
-          as I make my way through the upcoming projects."
-        </blockquote>
-    </div>
-
     <div class="container-fluid bg-3 text-center">
-        <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
-        <button class="btn btn-default btn-lg" onclick="addRandomAMSong()"><span class="glyphicon glyphicon-music"></span> Find</button>
-        <div id="song-container"></div>
+        <h3>Explore!</h3>
+
+        <p>Use this interactive map to explore some of my background! You will be able to discover my hometown, career-focused programs, and others.
+            To find out more about a location, simply click the red marker that refers to it.
+        </p>
+
+        <div id="map"></div>
     </div>
+
 
     <footer class="container-fluid bg-2 text-center">
         <p>Referenced to <a href="https://www.w3schools.com">www.w3schools.com</a> for this Bootstrap Theme</p>
     </footer>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4qpR2KTqAMI_rXlPi93WtandWiZex-Jk&callback=initMap">
+    </script>
 
   </body>
 </html>
