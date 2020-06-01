@@ -29,3 +29,9 @@ function addRandomAMSong() {
   const songContainer = document.getElementById('song-container');
   songContainer.innerText = song;
 }
+
+function loadHello() {
+    fetch('/data').then(response => response.text()).then((hello) => {
+        document.getElementById('hello-heading').innerHTML = hello;
+    });
+}
