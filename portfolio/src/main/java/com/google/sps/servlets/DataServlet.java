@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
+import com.google.appengine.api.datastore.DatastoreService;
+import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.Entity;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -66,9 +69,15 @@ public final class DataServlet extends HttpServlet {
         response.getWriter().println("Enter a comment before submitting.");
         return;
     }
+    
+    
+    // If the user did submit a comment, add it to the datastore
+    Entity commentEntity = new Entity("Comment");
+    commentEntity.setProperty("content", comment);
 
-    // If the user did submit a comment, add it to the comments array
-    comments.add(comment);
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+    datastore.put(commentEntity);
 
     // Respond with a success message
     response.setContentType("text/html;");
