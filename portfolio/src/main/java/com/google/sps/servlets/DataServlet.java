@@ -32,14 +32,6 @@ import com.google.sps.data.Comment;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
-  private ArrayList<String> comments;
-
-  @Override
-  public void init() {
-    comments = new ArrayList<>();
-  }
-
-
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     // Convert the comments to JSON
@@ -50,9 +42,22 @@ public final class DataServlet extends HttpServlet {
 
     // Instantiate the datastore
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    
+
     // Get prepared instance of the query
     PreparedQuery results = datastore.prepare(query);
+
+    // Iterate over results
+    List<Comment> comments = new ArrayList<>();
+    for (Entity entity : results.asIterable()) {
+      long id = entity.getKey().getId();
+      String content = (String) entity.getProperty("content");
+      long time = (long) entity.getProperty("time");
+
+      Comment comment = new Comment(id, content, time);
+      comments.add(comment);
+    }
+
+    
 
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -62,7 +67,7 @@ public final class DataServlet extends HttpServlet {
    * Converts the comments array  into a JSON string using the Gson library. Note: We first added
    * the Gson library dependency to pom.xml.
    */
-  private String convertToJsonUsingGson(List<String> comments) {
+  private String convertToJsonUsingGson(List<Comment> comments) {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
