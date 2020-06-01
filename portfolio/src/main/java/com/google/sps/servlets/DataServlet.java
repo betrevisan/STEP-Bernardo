@@ -26,6 +26,9 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import com.google.appengine.api.datastore.Query.SortDirection;
 
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
@@ -34,8 +37,6 @@ public final class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    // Convert the comments to JSON
-    String json = convertToJsonUsingGson(comments);
 
     // Create a query instance
     Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
