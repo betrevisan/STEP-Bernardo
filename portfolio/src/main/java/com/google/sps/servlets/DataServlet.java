@@ -45,6 +45,9 @@ public final class DataServlet extends HttpServlet {
     // Convert the comments to JSON
     String json = convertToJsonUsingGson(comments);
 
+    // Create a query instance
+    Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
