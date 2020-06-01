@@ -31,7 +31,9 @@ function addRandomAMSong() {
 }
 
 function loadHello() {
-    fetch('/data').then(response => response.text()).then((hello) => {
-        document.getElementById('hello-heading').innerHTML = hello;
+    fetch('/data').then(response => response.text()).then((comments) => {
+        document.getElementById('hello-heading').innerHTML = comments;
+        console.log(comments);
     });
+
 }
