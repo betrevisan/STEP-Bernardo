@@ -48,6 +48,12 @@ public final class DataServlet extends HttpServlet {
     // Create a query instance
     Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
 
+    // Instantiate the datastore
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    
+    // Get prepared instance of the query
+    PreparedQuery results = datastore.prepare(query);
+
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
