@@ -27,14 +27,11 @@ import com.google.gson.Gson;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
-  private List<String> comments;
+  private ArrayList<String> comments;
 
   @Override
   public void init() {
     comments = new ArrayList<>();
-    comments.add("Cool website!");
-    comments.add("I enjoyed looking at your photographs!");
-    comments.add("I thought exploring your background map was quite fun.");
   }
 
 
@@ -55,5 +52,39 @@ public final class DataServlet extends HttpServlet {
     Gson gson = new Gson();
     String json = gson.toJson(comments);
     return json;
+  }
+
+
+  @Override
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    // Get the input from the form.
+    String comment = getParameter(request, "user-comment", null);
+
+    // Return error message if the user did not input any comment.
+    if (comment == null) {
+        response.setContentType("text/html;");
+        response.getWriter().println("Enter a comment before submitting.");
+        return;
+    }
+
+    // If the user did submit a comment, add it to the comments array
+    comments.add(comment);
+
+    // Respond with a success message
+    response.setContentType("text/html;");
+    response.getWriter().println("Your comment has been registered. Thank you!");
+  }
+
+
+  /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
+  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    // Get the input from the form.
+    String value = request.getParameter(name);
+
+    if (value == null) {
+        return defaultValue;
+    }
+
+    return value;
   }
 }

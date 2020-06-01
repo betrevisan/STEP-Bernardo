@@ -30,9 +30,9 @@ function addRandomAMSong() {
   songContainer.innerText = song;
 }
 
-function loadHello() {
+function getComments() {
     fetch('/data').then(response => response.text()).then((comments) => {
-        document.getElementById('hello-heading').innerHTML = comments;
+        document.getElementById('comments-heading').innerHTML = comments;
         console.log(comments);
     });
 

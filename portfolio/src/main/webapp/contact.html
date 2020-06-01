@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
-  <body>
+  <body onload="getComments()">
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -46,7 +46,17 @@
         </div>
     </div>
 
+    <form action="/data" method="POST">
+
+      <p>Comment:</p>
+      <textarea name="user-comment"></textarea>
+      <br/><br/>
+
+      <input type="submit" />
+    </form>
+
     <div class="container-fluid bg-1 text-center">
+        <h3 style="font-weight:bolder;" id="comments-heading"></h3>
     </div>
 
     <div class="container-fluid bg-1 text-center">
@@ -64,5 +74,6 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
