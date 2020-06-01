@@ -19,16 +19,41 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import com.google.gson.Gson;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
+  private List<String> comments;
+
+  @Override
+  public void init() {
+    comments = new ArrayList<>();
+    comments.add("Cool website!");
+    comments.add("I enjoyed looking at your photographs!");
+    comments.add("I thought exploring your background map was quite fun.");
+  }
+
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String hello = "Hello Bernardo!";
+    // Convert the comments to JSON
+    String json = convertToJsonUsingGson(comments);
 
-    response.setContentType("text/html;");
-    response.getWriter().println(hello);
+    response.setContentType("application/json;");
+    response.getWriter().println(json);
+  }
+
+  /**
+   * Converts the comments array  into a JSON string using the Gson library. Note: We first added
+   * the Gson library dependency to pom.xml.
+   */
+  private String convertToJsonUsingGson(List<String> comments) {
+    Gson gson = new Gson();
+    String json = gson.toJson(comments);
+    return json;
   }
 }
