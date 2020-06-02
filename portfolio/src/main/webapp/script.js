@@ -51,6 +51,12 @@ function createCommentBox(comment) {
     const timeElement = document.createElement('small');
     timeElement.innerHTML = comment.time;
 
+    const upElement = document.createElement('small');
+    upElement.innerHTML = comment.thumbsup;
+
+    const downElement = document.createElement('small');
+    downElement.innerHTML = comment.thumbsdown;
+
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
     deleteButtonElement.className = 'btn btn-default btn-lg';
