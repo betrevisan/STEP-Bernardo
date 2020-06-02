@@ -82,7 +82,11 @@ function createCommentBox(comment) {
 
     commmentElement.appendChild(contentElement);
     commmentElement.appendChild(timeElement);
+    commmentElement.appendChild(upElement);
+    commmentElement.appendChild(downElement);
     commmentElement.appendChild(deleteButtonElement);
+    commmentElement.appendChild(upButtonElement);
+    commmentElement.appendChild(downButtonElement);
     return commmentElement;
 }
 
