@@ -81,6 +81,15 @@ public final class DataServlet extends HttpServlet {
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    // Get the input from the form.
+    String max = getParameter(request, "max-comments", null);
+    // If a maximum number of comments has been selected, only update the maxComments variable and return.
+    if (max != null) {
+        maxComments = max;
+        return;
+    }
+    
     // Get the input from the form.
     String comment = getParameter(request, "user-comment", null);
 
