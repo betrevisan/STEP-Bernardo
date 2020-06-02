@@ -65,3 +65,9 @@ function createCommentBox(comment) {
     commmentElement.appendChild(deleteButtonElement);
     return commmentElement;
 }
+
+function deleteComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch('/delete-data', {method: 'POST', body: params});
+}
