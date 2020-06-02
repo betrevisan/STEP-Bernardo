@@ -49,15 +49,23 @@ public final class DataServlet extends HttpServlet {
     // Get prepared instance of the query
     PreparedQuery results = datastore.prepare(query);
 
+
+
     // Iterate over results
     List<Comment> comments = new ArrayList<>();
+    int count = 0;
     for (Entity entity : results.asIterable()) {
+      if (count >= maxComments) {
+          break;
+      }
+
       long id = entity.getKey().getId();
       String content = (String) entity.getProperty("content");
       long time = (long) entity.getProperty("time");
 
       Comment comment = new Comment(id, content, time);
       comments.add(comment);
+      count = count + 1;
     }
 
     // Convert to json
@@ -86,7 +94,9 @@ public final class DataServlet extends HttpServlet {
     String max = getParameter(request, "max-comments", null);
     // If a maximum number of comments has been selected, only update the maxComments variable and return.
     if (max != null) {
-        maxComments = max;
+
+        maxComments = Integer.parseInt(max);
+        response.sendRedirect("/contact.html");
         return;
     }
     
