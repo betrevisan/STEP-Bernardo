@@ -95,7 +95,22 @@ public final class DataServlet extends HttpServlet {
     // If a maximum number of comments has been selected, only update the maxComments variable and return.
     if (max != null) {
 
-        maxComments = Integer.parseInt(max);
+        int tempMax;
+
+        try {
+            tempMax = Integer.parseInt(max);
+        } catch (NumberFormatException e) {
+            // Return if max was not numeric
+            response.sendRedirect("/contact.html");
+            return;
+        }
+
+        // Only update maxComments if tempMax was not negative
+        if (tempMax >= 0)
+        {
+            maxComments = tempMax;
+        }
+
         response.sendRedirect("/contact.html");
         return;
     }
