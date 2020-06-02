@@ -36,7 +36,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 @WebServlet("/delete-data")
 public final class DeleteServlet extends HttpServlet {
 
-
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         long id = Long.parseLong(request.getParameter("id"));
@@ -48,5 +47,4 @@ public final class DeleteServlet extends HttpServlet {
         response.sendRedirect("/contact.html");
         return;
     }
-
 }

@@ -49,8 +49,6 @@ public final class DataServlet extends HttpServlet {
     // Get prepared instance of the query
     PreparedQuery results = datastore.prepare(query);
 
-
-
     // Iterate over results
     List<Comment> comments = new ArrayList<>();
     int count = 0;
@@ -71,7 +69,6 @@ public final class DataServlet extends HttpServlet {
     // Convert to json
     String json = convertToJsonUsingGson(comments);
 
-
     response.setContentType("application/json;");
     response.getWriter().println(json);
   }
@@ -81,9 +78,9 @@ public final class DataServlet extends HttpServlet {
    * the Gson library dependency to pom.xml.
    */
   private String convertToJsonUsingGson(List<Comment> comments) {
-    Gson gson = new Gson();
-    String json = gson.toJson(comments);
-    return json;
+      Gson gson = new Gson();
+      String json = gson.toJson(comments);
+      return json;
   }
 
 
@@ -125,7 +122,6 @@ public final class DataServlet extends HttpServlet {
         return;
     }
     
-    
     // If the user did submit a comment, add it to the datastore
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("content", comment);
@@ -141,7 +137,6 @@ public final class DataServlet extends HttpServlet {
     response.setContentType("text/html;");
     response.getWriter().println("Your comment has been registered. Thank you!");
   }
-
 
   /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
