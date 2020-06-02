@@ -51,7 +51,17 @@ function createCommentBox(comment) {
     const timeElement = document.createElement('small');
     timeElement.innerHTML = comment.time;
 
+    const deleteButtonElement = document.createElement('button');
+    deleteButtonElement.innerText = 'Delete';
+    deleteButtonElement.className = 'btn btn-default btn-lg';
+    deleteButtonElement.addEventListener('click', () => {
+        deleteComment(comment);
+
+        commmentElement.remove();
+    });
+
     commmentElement.appendChild(contentElement);
     commmentElement.appendChild(timeElement);
+    commmentElement.appendChild(deleteButtonElement);
     return commmentElement;
 }
