@@ -91,3 +91,15 @@ function deleteComment(comment) {
   params.append('id', comment.id);
   fetch('/delete-data', {method: 'POST', body: params});
 }
+
+function upComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch('/thumbsup-data', {method: 'POST', body: params});
+}
+
+function downComment(comment) {
+  const params = new URLSearchParams();
+  params.append('id', comment.id);
+  fetch('/thumbsdown-data', {method: 'POST', body: params});
+}
