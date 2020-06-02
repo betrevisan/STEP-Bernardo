@@ -35,6 +35,8 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
+  private int maxComments = 10;
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
