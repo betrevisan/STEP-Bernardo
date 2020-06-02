@@ -39,3 +39,19 @@ function getComments() {
         console.log(comments);
     });
 }
+
+function createCommentBox(comment) {
+    const commmentElement = document.createElement('li');
+    commmentElement.className = 'list-group-item';
+
+    const contentElement = document.createElement('p');
+    contentElement.className = 'mb-1';
+    contentElement.innerHTML = comment.content;
+
+    const timeElement = document.createElement('small');
+    timeElement.innerHTML = comment.time;
+
+    commmentElement.appendChild(contentElement);
+    commmentElement.appendChild(timeElement);
+    return commmentElement;
+}
