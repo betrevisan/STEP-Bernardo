@@ -65,7 +65,7 @@ public final class DataServlet extends HttpServlet {
 
       Comment comment = new Comment(id, content, time);
       comments.add(comment);
-      count = count + 1;
+      count++;
     }
 
     // Convert to json
