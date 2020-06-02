@@ -23,11 +23,11 @@ public final class Comment {
   private int thumbsup;
   private int thumbsdown;
 
-  public Comment(long id, String content, long time) {
+  public Comment(long id, String content, long time, int thumbsup, int thumbsdown) {
     this.id = id;
     this.content = content;
     this.time = time;
-    this.thumbsup = 0;
-    this.thumbsdown = 0;
+    this.thumbsup = thumbsup;
+    this.thumbsdown = thumbsdown;
   }
 }
