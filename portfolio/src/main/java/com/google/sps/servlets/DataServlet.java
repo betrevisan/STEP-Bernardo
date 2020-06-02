@@ -127,6 +127,10 @@ public final class DataServlet extends HttpServlet {
     long timestamp = System.currentTimeMillis();
     commentEntity.setProperty("time", timestamp);
 
+    commentEntity.setProperty("thumbsup", 0);
+
+    commentEntity.setProperty("thumbsdown", 0);
+
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     datastore.put(commentEntity);
