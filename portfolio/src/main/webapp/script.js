@@ -60,6 +60,20 @@ function createCommentBox(comment) {
         commmentElement.remove();
     });
 
+    const upButtonElement = document.createElement('button');
+    upButtonElement.innerText = 'Thumbs Up';
+    upButtonElement.className = 'btn btn-default btn-lg';
+    upButtonElement.addEventListener('click', () => {
+        upComment(comment);
+    });
+
+    const downButtonElement = document.createElement('button');
+    downButtonElement.innerText = 'Thumbs Down';
+    downButtonElement.className = 'btn btn-default btn-lg';
+    downButtonElement.addEventListener('click', () => {
+        downComment(comment);
+    });
+
     commmentElement.appendChild(contentElement);
     commmentElement.appendChild(timeElement);
     commmentElement.appendChild(deleteButtonElement);
