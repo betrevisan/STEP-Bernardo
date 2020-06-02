@@ -20,10 +20,14 @@ public final class Comment {
   private final long id;
   private final String content;
   private final long time;
+  private int thumbsup;
+  private int thumbsdown;
 
   public Comment(long id, String content, long time) {
     this.id = id;
     this.content = content;
     this.time = time;
+    this.thumbsup = 0;
+    this.thumbsdown = 0;
   }
 }
