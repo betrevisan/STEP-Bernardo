@@ -106,7 +106,7 @@ public final class DataServlet extends HttpServlet {
         }
 
         // Only update maxComments if tempMax was not negative
-        if (tempMax >= 0)
+        if (tempMax > 0)
         {
             maxComments = tempMax;
         }
