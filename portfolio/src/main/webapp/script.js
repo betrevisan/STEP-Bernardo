@@ -31,9 +31,11 @@ function addRandomAMSong() {
 }
 
 function getComments() {
-    fetch('/data').then(response => response.text()).then((comments) => {
-        document.getElementById('comments-heading').innerHTML = comments;
+    fetch('/data').then(response => response.json()).then((comments) => {
+        console.log(comments);
+        comments.forEach((comment) => {
+            document.getElementById('comments-list').appendChild(createCommentBox(comment));
+        })
         console.log(comments);
     });
-
 }
