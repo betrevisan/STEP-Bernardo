@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -34,6 +35,8 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
+
+  private int maxComments = 10;
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -49,18 +52,20 @@ public final class DataServlet extends HttpServlet {
 
     // Iterate over results
     List<Comment> comments = new ArrayList<>();
-    for (Entity entity : results.asIterable()) {
-      long id = entity.getKey().getId();
-      String content = (String) entity.getProperty("content");
-      long time = (long) entity.getProperty("time");
+    Iterator<Entity> iter = results.asIterator();
+    for (int count = 0; count < maxComments && count < results.countEntities(); count++) {
+        Entity entity = iter.next();
 
-      Comment comment = new Comment(id, content, time);
-      comments.add(comment);
+        long id = entity.getKey().getId();
+        String content = (String) entity.getProperty("content");
+        long time = (long) entity.getProperty("time");
+
+        Comment comment = new Comment(id, content, time);
+        comments.add(comment);
     }
 
     // Convert to json
     String json = convertToJsonUsingGson(comments);
-
 
     response.setContentType("application/json;");
     response.getWriter().println(json);
@@ -71,14 +76,40 @@ public final class DataServlet extends HttpServlet {
    * the Gson library dependency to pom.xml.
    */
   private String convertToJsonUsingGson(List<Comment> comments) {
-    Gson gson = new Gson();
-    String json = gson.toJson(comments);
-    return json;
+      Gson gson = new Gson();
+      String json = gson.toJson(comments);
+      return json;
   }
 
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    
+    // Get the input from the form.
+    String max = getParameter(request, "max-comments", null);
+    // If a maximum number of comments has been selected, only update the maxComments variable and return.
+    if (max != null) {
+
+        int tempMax;
+
+        try {
+            tempMax = Integer.parseInt(max);
+        } catch (NumberFormatException e) {
+            // Return if max was not numeric
+            response.sendRedirect("/contact.html");
+            return;
+        }
+
+        // Only update maxComments if tempMax was not negative
+        if (tempMax > 0)
+        {
+            maxComments = tempMax;
+        }
+
+        response.sendRedirect("/contact.html");
+        return;
+    }
+    
     // Get the input from the form.
     String comment = getParameter(request, "user-comment", null);
 
@@ -88,7 +119,6 @@ public final class DataServlet extends HttpServlet {
         response.getWriter().println("Enter a comment before submitting.");
         return;
     }
-    
     
     // If the user did submit a comment, add it to the datastore
     Entity commentEntity = new Entity("Comment");
@@ -105,7 +135,6 @@ public final class DataServlet extends HttpServlet {
     response.setContentType("text/html;");
     response.getWriter().println("Your comment has been registered. Thank you!");
   }
-
 
   /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
   private String getParameter(HttpServletRequest request, String name, String defaultValue) {
