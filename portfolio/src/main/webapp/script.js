@@ -46,13 +46,15 @@ function createCommentBox(comment) {
 
     const contentElement = document.createElement('p');
     contentElement.className = 'mb-1';
+    contentElement.style.textAlign = 'left';
     contentElement.innerHTML = comment.content;
 
     const timeElement = document.createElement('small');
-    timeElement.innerHTML = comment.time;
+    timeElement.innerHTML = new Date(comment.time);
 
     const topLineElement = document.createElement('div');
     topLineElement.className = 'd-flex w-100 justify-content-between';
+    topLineElement.style.textAlign = 'right';
     topLineElement.appendChild(timeElement);
 
     const upElement = document.createElement('small');
