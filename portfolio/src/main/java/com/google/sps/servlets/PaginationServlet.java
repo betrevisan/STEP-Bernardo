@@ -56,6 +56,22 @@ public final class PaginationServlet extends HttpServlet {
         response.getWriter().println(json);
     }
 
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("AllComments");
+        PreparedQuery results = datastore.prepare(query);
+        Iterator<Entity> iter = results.asIterator();
+        Entity entity = iter.next();
+
+        long newPage = Long.parseLong(request.getParameter("i")) + 1;
+        entity.setProperty("page", newPage);
+        datastore.put(entity);
+
+        response.sendRedirect("/contact.html");
+        return;
+    }
+
     /**
     * Converts the comments array  into a JSON string using the Gson library. Note: We first added
     * the Gson library dependency to pom.xml.

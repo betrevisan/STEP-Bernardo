@@ -158,6 +158,6 @@ function createPaginationBox(i) {
 
 function changePages(i) {
   const params = new URLSearchParams();
-  params.append('id', i);
+  params.append('i', i);
   fetch('/pagination', {method: 'POST', body: params});
 }

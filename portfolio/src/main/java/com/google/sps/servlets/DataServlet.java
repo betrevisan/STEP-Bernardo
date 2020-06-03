@@ -51,6 +51,7 @@ public final class DataServlet extends HttpServlet {
         // Only creates a new AllComments entity if one has not yet been created
         if (results.countEntities() == 0) {
             createAllComments();
+            System.out.println("created");
         } else {
             // If there is already an entity in the datastore, simply store its key
             Iterator<Entity> iter = results.asIterator();
@@ -158,17 +159,25 @@ public final class DataServlet extends HttpServlet {
         Iterator<Entity> iter = results.asIterator();
         int totalComments = results.countEntities();
 
-        for (int count = 0; count < maxComments && count < totalComments; count++) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("AllComments");
+        PreparedQuery resultsAll = datastore.prepare(query);
+        Iterator<Entity> allIter = resultsAll.asIterator();
+        Entity allComments = allIter.next();
+        long page = (long) allComments.getProperty("page");
+
+        for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
             Entity entity = iter.next();
+            if (count >= (maxComments * (page - 1))) {
+                long id = entity.getKey().getId();
+                String content = (String) entity.getProperty("content");
+                long time = (long) entity.getProperty("time");
+                long thumbsup = (long) entity.getProperty("thumbsup");
+                long thumbsdown = (long) entity.getProperty("thumbsdown");
 
-            long id = entity.getKey().getId();
-            String content = (String) entity.getProperty("content");
-            long time = (long) entity.getProperty("time");
-            long thumbsup = (long) entity.getProperty("thumbsup");
-            long thumbsdown = (long) entity.getProperty("thumbsdown");
-
-            Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
-            comments.add(comment);
+                Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
+                comments.add(comment);
+            }
         }
 
         return comments;
