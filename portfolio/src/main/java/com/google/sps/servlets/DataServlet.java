@@ -36,121 +36,134 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
-  private int maxComments = 10;
+    private int maxComments = 10;
 
-  @Override
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void init() {
+        // Initialize the AllComments entity in the datastore
+        Entity all = new Entity("AllComments");
+        all.setProperty("total", 0);
+        all.setProperty("max", 0);
 
-    // Create a query instance
-    Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    // Instantiate the datastore
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    // Get prepared instance of the query
-    PreparedQuery results = datastore.prepare(query);
-
-    // Iterate over results
-    List<Comment> comments = new ArrayList<>();
-    Iterator<Entity> iter = results.asIterator();
-    for (int count = 0; count < maxComments && count < results.countEntities(); count++) {
-        Entity entity = iter.next();
-
-        long id = entity.getKey().getId();
-        String content = (String) entity.getProperty("content");
-        long time = (long) entity.getProperty("time");
-        long thumbsup = (long) entity.getProperty("thumbsup");
-        long thumbsdown = (long) entity.getProperty("thumbsdown");
-
-        Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
-        comments.add(comment);
+        datastore.put(all);
     }
 
-    // Convert to json
-    String json = convertToJsonUsingGson(comments);
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-    response.setContentType("application/json;");
-    response.getWriter().println(json);
-  }
+        // Create a query instance
+        Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
 
-  /**
-   * Converts the comments array  into a JSON string using the Gson library. Note: We first added
-   * the Gson library dependency to pom.xml.
-   */
-  private String convertToJsonUsingGson(List<Comment> comments) {
-      Gson gson = new Gson();
-      String json = gson.toJson(comments);
-      return json;
-  }
+        // Instantiate the datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        // Get prepared instance of the query
+        PreparedQuery results = datastore.prepare(query);
+
+        // Iterate over results
+        List<Comment> comments = new ArrayList<>();
+        Iterator<Entity> iter = results.asIterator();
+        int totalComments = results.countEntities();
+        for (int count = 0; count < maxComments && count < totalComments; count++) {
+            Entity entity = iter.next();
+
+            long id = entity.getKey().getId();
+            String content = (String) entity.getProperty("content");
+            long time = (long) entity.getProperty("time");
+            long thumbsup = (long) entity.getProperty("thumbsup");
+            long thumbsdown = (long) entity.getProperty("thumbsdown");
+
+            Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
+            comments.add(comment);
+        }
+
+        // Convert to json
+        String json = convertToJsonUsingGson(comments);
+
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
+    }
+
+    /**
+    * Converts the comments array  into a JSON string using the Gson library. Note: We first added
+    * the Gson library dependency to pom.xml.
+    */
+    private String convertToJsonUsingGson(List<Comment> comments) {
+        Gson gson = new Gson();
+        String json = gson.toJson(comments);
+        return json;
+    }
 
 
-  @Override
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    
-    // Get the input from the form.
-    String max = getParameter(request, "max-comments", null);
-    // If a maximum number of comments has been selected, only update the maxComments variable and return.
-    if (max != null) {
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        
+        // Get the input from the form.
+        String max = getParameter(request, "max-comments", null);
+        // If a maximum number of comments has been selected, only update the maxComments variable and return.
+        if (max != null) {
 
-        int tempMax;
+            int tempMax;
 
-        try {
-            tempMax = Integer.parseInt(max);
-        } catch (NumberFormatException e) {
-            // Return if max was not numeric
+            try {
+                tempMax = Integer.parseInt(max);
+            } catch (NumberFormatException e) {
+                // Return if max was not numeric
+                response.sendRedirect("/contact.html");
+                return;
+            }
+
+            // Only update maxComments if tempMax was not negative
+            if (tempMax > 0)
+            {
+                maxComments = tempMax;
+            }
+
             response.sendRedirect("/contact.html");
             return;
         }
+        
+        // Get the input from the form.
+        String comment = getParameter(request, "user-comment", null);
 
-        // Only update maxComments if tempMax was not negative
-        if (tempMax > 0)
-        {
-            maxComments = tempMax;
+        // Return error message if the user did not input any comment.
+        if (comment == null) {
+            response.setContentType("text/html;");
+            response.getWriter().println("Enter a comment before submitting.");
+            return;
+        }
+    
+        // If the user did submit a comment, add it to the datastore
+        Entity commentEntity = new Entity("Comment");
+        commentEntity.setProperty("content", comment);
+
+        long timestamp = System.currentTimeMillis();
+        commentEntity.setProperty("time", timestamp);
+
+        commentEntity.setProperty("thumbsup", 0);
+
+        commentEntity.setProperty("thumbsdown", 0);
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        datastore.put(commentEntity);
+
+        // Respond with a success message
+        response.setContentType("text/html;");
+        response.getWriter().println("Your comment has been registered. Thank you!");
+    }
+
+    /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
+    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+        // Get the input from the form.
+        String value = request.getParameter(name);
+
+        if (value == null) {
+            return defaultValue;
         }
 
-        response.sendRedirect("/contact.html");
-        return;
+        return value;
     }
-    
-    // Get the input from the form.
-    String comment = getParameter(request, "user-comment", null);
-
-    // Return error message if the user did not input any comment.
-    if (comment == null) {
-        response.setContentType("text/html;");
-        response.getWriter().println("Enter a comment before submitting.");
-        return;
-    }
-    
-    // If the user did submit a comment, add it to the datastore
-    Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("content", comment);
-
-    long timestamp = System.currentTimeMillis();
-    commentEntity.setProperty("time", timestamp);
-
-    commentEntity.setProperty("thumbsup", 0);
-
-    commentEntity.setProperty("thumbsdown", 0);
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-    datastore.put(commentEntity);
-
-    // Respond with a success message
-    response.setContentType("text/html;");
-    response.getWriter().println("Your comment has been registered. Thank you!");
-  }
-
-  /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
-  private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-    // Get the input from the form.
-    String value = request.getParameter(name);
-
-    if (value == null) {
-        return defaultValue;
-    }
-
-    return value;
-  }
 }
