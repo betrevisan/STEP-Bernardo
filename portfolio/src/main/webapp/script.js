@@ -131,7 +131,24 @@ function downComment(comment) {
 }
 
 function getPagination() {
-    fetch('/pagination').then(response => response.text()).then((info) => {
-        document.getElementById('pagination-list').appendChild(createPaginationBox(info));
+    fetch('/pagination').then(response => response.json()).then((info) => {
+        info.forEach((entity) => {
+            const buttons = Math.ceil(entity.total / entity.max);
+            for (var i = 0; i < buttons; i++) {
+                document.getElementById('pagination-list').appendChild(createPaginationBox(i));
+            }
+        })
     });
+}
+
+function createPaginationBox(i) {
+    const linkElement = document.createElement('a');
+    linkElement.className = 'page-link';
+    linkElement.innerHTML = i + 1;
+
+    const itemElement = document.createElement('li');
+    itemElement.className = 'page-item';
+    itemElement.appendChild(linkElement);
+
+    return itemElement;
 }

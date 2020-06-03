@@ -47,10 +47,14 @@ public final class PaginationServlet extends HttpServlet {
         long total = (long) entity.getProperty("total");
         long max = (long) entity.getProperty("max");
         info.add(new AllComments(total, max));
+        System.out.println("got here");
+        System.out.println(max);
+        System.out.println(total);
         
 
         // Convert to json
         String json = convertToJsonUsingGson(info);
+        System.out.println(json);
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }

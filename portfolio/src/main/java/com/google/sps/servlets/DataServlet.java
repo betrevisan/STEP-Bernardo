@@ -191,7 +191,7 @@ public final class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity allComments = new Entity("AllComments");
         allComments.setProperty("total", 0);
-        allComments.setProperty("max", 0);
+        allComments.setProperty("max", maxComments);
         datastore.put(allComments);
 
         // Stores the key to the entity that stores information about all comments
