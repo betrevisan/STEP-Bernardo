@@ -32,11 +32,9 @@ function addRandomAMSong() {
 
 function getComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
-        console.log(comments);
         comments.forEach((comment) => {
             document.getElementById('comments-list').appendChild(createCommentBox(comment));
         })
-        console.log(comments);
     });
 }
 
@@ -130,4 +128,10 @@ function downComment(comment) {
   const params = new URLSearchParams();
   params.append('id', comment.id);
   fetch('/thumbsdown-data', {method: 'POST', body: params});
+}
+
+function getPagination() {
+    fetch('/pagination').then(response => response.text()).then((info) => {
+        document.getElementById('pagination-list').appendChild(createPaginationBox(info));
+    });
 }
