@@ -43,21 +43,14 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void init() {
-
+        // Query the AllComments entity
         Query query = new Query("AllComments");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
 
         // Only creates a new AllComments entity if one has not yet been created
         if (results.countEntities() == 0) {
-            Entity all = new Entity("AllComments");
-            all.setProperty("total", 0);
-            all.setProperty("max", 0);
-
-            // Stores the key to the entity that stores information about all comments
-            allKey = all.getKey();
-
-            datastore.put(all);
+            createAllComments();
         } else {
             // If there is already an entity in the datastore, simply store its key
             Iterator<Entity> iter = results.asIterator();
@@ -199,5 +192,17 @@ public final class DataServlet extends HttpServlet {
         }
 
         return value;
+    }
+
+    // Creates an AllComments entity and stores it in the datastore
+    private void createAllComments() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity allComments = new Entity("AllComments");
+        allComments.setProperty("total", 0);
+        allComments.setProperty("max", 0);
+        datastore.put(allComments);
+
+        // Stores the key to the entity that stores information about all comments
+        allKey = allComments.getKey();
     }
 }
