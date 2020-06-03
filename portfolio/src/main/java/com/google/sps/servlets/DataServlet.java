@@ -114,6 +114,7 @@ public final class DataServlet extends HttpServlet {
             if (tempMax > 0)
             {
                 maxComments = tempMax;
+                changeAllCommentsMax(tempMax);
             }
 
             response.sendRedirect("/contact.html");
@@ -226,4 +227,20 @@ public final class DataServlet extends HttpServlet {
         allEntity.setProperty("total", newTotal);
         datastore.put(allEntity);
     }
+
+    // Changes the value of the maximum number of comment per page property in AllComments and updates the datastore
+    private void changeAllCommentsMax(long newMax) {
+         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        // Get the all comments entity using its key
+        Entity allEntity;
+        try {
+            allEntity = datastore.get(allKey);
+        } catch(Exception e) {
+            return;
+        }
+
+        allEntity.setProperty("max", newMax);
+        datastore.put(allEntity);
+    } 
 }
