@@ -30,6 +30,8 @@ import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
 
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
@@ -37,6 +39,7 @@ import com.google.appengine.api.datastore.Query.SortDirection;
 public final class DataServlet extends HttpServlet {
 
     private int maxComments = 10;
+    private Key allKey;
 
     @Override
     public void init() {
@@ -46,6 +49,9 @@ public final class DataServlet extends HttpServlet {
         all.setProperty("max", 0);
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        // Stores the key to the entity that stores information about all comments
+        allKey = all.getKey();
 
         datastore.put(all);
     }
