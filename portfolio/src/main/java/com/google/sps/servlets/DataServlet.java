@@ -159,23 +159,8 @@ public final class DataServlet extends HttpServlet {
 
         datastore.put(commentEntity);
 
-        // Get the all comments entity using its key
-        Entity allEntity;
-        try {
-            allEntity = datastore.get(allKey);
-        } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get all comments entity.");
-            return;
-        }
-
-        long prevTotal = (long) allEntity.getProperty("total");
-
-        long newTotal = prevTotal + 1;
-
-        allEntity.setProperty("total", newTotal);
-
-        datastore.put(allEntity);
+        // Increase total of all comments by 1
+        changeAllCommentsTotal(1);
 
         // Respond with a success message
         response.setContentType("text/html;");
@@ -204,5 +189,26 @@ public final class DataServlet extends HttpServlet {
 
         // Stores the key to the entity that stores information about all comments
         allKey = allComments.getKey();
+    }
+
+    // Changes the value of the total property in AllComments and updates the datastore
+    private void changeAllCommentsTotal(int value) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        // Get the all comments entity using its key
+        Entity allEntity;
+        try {
+            allEntity = datastore.get(allKey);
+        } catch(Exception e) {
+            response.setContentType("text/html;");
+            response.getWriter().println("Unable to get all comments entity.");
+            return;
+        }
+
+        long prevTotal = (long) allEntity.getProperty("total");
+        long newTotal = prevTotal + value;
+
+        allEntity.setProperty("total", newTotal);
+        datastore.put(allEntity);
     }
 }
