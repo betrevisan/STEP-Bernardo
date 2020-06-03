@@ -145,19 +145,7 @@ public final class DataServlet extends HttpServlet {
         }
     
         // If the user did submit a comment, add it to the datastore
-        Entity commentEntity = new Entity("Comment");
-        commentEntity.setProperty("content", comment);
-
-        long timestamp = System.currentTimeMillis();
-        commentEntity.setProperty("time", timestamp);
-
-        commentEntity.setProperty("thumbsup", 0);
-
-        commentEntity.setProperty("thumbsdown", 0);
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        datastore.put(commentEntity);
+        createComment(comment);
 
         // Increase total of all comments by 1
         changeAllCommentsTotal(1);
@@ -178,6 +166,19 @@ public final class DataServlet extends HttpServlet {
 
         return value;
     }
+
+    // Creates a Comment entity and stores it in the datastore
+    private void createComment(String comment) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity commentEntity = new Entity("Comment");
+        commentEntity.setProperty("content", comment);
+        long timestamp = System.currentTimeMillis();
+        commentEntity.setProperty("time", timestamp);
+        commentEntity.setProperty("thumbsup", 0);
+        commentEntity.setProperty("thumbsdown", 0);
+        datastore.put(commentEntity);
+    }
+
 
     // Creates an AllComments entity and stores it in the datastore
     private void createAllComments() {
@@ -200,8 +201,6 @@ public final class DataServlet extends HttpServlet {
         try {
             allEntity = datastore.get(allKey);
         } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get all comments entity.");
             return;
         }
 
