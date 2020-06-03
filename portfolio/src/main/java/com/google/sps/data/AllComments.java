@@ -19,9 +19,11 @@ public final class AllComments {
 
   private long total;
   private long max;
+  private long page;
 
-  public AllComments(long total, long max) {
+  public AllComments(long total, long max, long page) {
     this.total = total;
     this.max = max;
+    this.page = page;
   }
 }

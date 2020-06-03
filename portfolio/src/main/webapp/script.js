@@ -149,6 +149,15 @@ function createPaginationBox(i) {
     const itemElement = document.createElement('li');
     itemElement.className = 'page-item';
     itemElement.appendChild(linkElement);
+    itemElement.addEventListener('click', () => {
+        changePages(i);
+    });
 
     return itemElement;
+}
+
+function changePages(i) {
+  const params = new URLSearchParams();
+  params.append('id', i);
+  fetch('/pagination', {method: 'POST', body: params});
 }

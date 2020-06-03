@@ -192,6 +192,7 @@ public final class DataServlet extends HttpServlet {
         Entity allComments = new Entity("AllComments");
         allComments.setProperty("total", 0);
         allComments.setProperty("max", maxComments);
+        allComments.setProperty("page", 1);
         datastore.put(allComments);
 
         // Stores the key to the entity that stores information about all comments

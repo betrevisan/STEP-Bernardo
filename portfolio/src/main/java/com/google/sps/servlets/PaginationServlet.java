@@ -46,15 +46,12 @@ public final class PaginationServlet extends HttpServlet {
         List<AllComments> info = new ArrayList<>();
         long total = (long) entity.getProperty("total");
         long max = (long) entity.getProperty("max");
-        info.add(new AllComments(total, max));
+        long page = (long) entity.getProperty("page");
+        info.add(new AllComments(total, max, page));
         System.out.println("got here");
-        System.out.println(max);
-        System.out.println(total);
-        
 
         // Convert to json
         String json = convertToJsonUsingGson(info);
-        System.out.println(json);
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
@@ -68,6 +65,4 @@ public final class PaginationServlet extends HttpServlet {
         String json = gson.toJson(allComments);
         return json;
     }
-
-    
 }
