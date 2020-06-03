@@ -57,11 +57,26 @@ function createCommentBox(comment) {
     topLineElement.style.textAlign = 'right';
     topLineElement.appendChild(timeElement);
 
+    const upIconElement = document.createElement('span');
+    upIconElement.className = 'glyphicon glyphicon-thumbs-up';
+
     const upElement = document.createElement('small');
     upElement.innerHTML = comment.thumbsup;
+    upElement.style.padding = '40px';
+    upElement.appendChild(upIconElement);
+
+    const downIconElement = document.createElement('span');
+    downIconElement.className = 'glyphicon glyphicon-thumbs-down';
 
     const downElement = document.createElement('small');
     downElement.innerHTML = comment.thumbsdown;
+    downElement.appendChild(downIconElement);
+
+    const reactionsLineElement = document.createElement('div');
+    reactionsLineElement.className = 'd-flex w-100 justify-content-between';
+    reactionsLineElement.style.textAlign = 'right';
+    reactionsLineElement.appendChild(upElement);
+    reactionsLineElement.appendChild(downElement);
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
@@ -94,8 +109,7 @@ function createCommentBox(comment) {
 
     commmentElement.appendChild(topLineElement);
     commmentElement.appendChild(contentElement);
-    commmentElement.appendChild(upElement);
-    commmentElement.appendChild(downElement);
+    commmentElement.appendChild(reactionsLineElement);
     commmentElement.appendChild(buttonLineElement);
     return commmentElement;
 }
