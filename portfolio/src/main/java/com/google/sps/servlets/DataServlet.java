@@ -72,25 +72,10 @@ public final class DataServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query);
 
         // Iterate over results
-        List<Comment> comments = new ArrayList<>();
-        Iterator<Entity> iter = results.asIterator();
-        int totalComments = results.countEntities();
-        for (int count = 0; count < maxComments && count < totalComments; count++) {
-            Entity entity = iter.next();
-
-            long id = entity.getKey().getId();
-            String content = (String) entity.getProperty("content");
-            long time = (long) entity.getProperty("time");
-            long thumbsup = (long) entity.getProperty("thumbsup");
-            long thumbsdown = (long) entity.getProperty("thumbsdown");
-
-            Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
-            comments.add(comment);
-        }
-
+        List<Comment> comments = iterateQuery(results);
+        
         // Convert to json
         String json = convertToJsonUsingGson(comments);
-
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
@@ -167,6 +152,28 @@ public final class DataServlet extends HttpServlet {
         return value;
     }
 
+    // Iterates over a comments query and returns an array of comments
+    private List<Comment> iterateQuery(PreparedQuery results) {
+        List<Comment> comments = new ArrayList<>();
+        Iterator<Entity> iter = results.asIterator();
+        int totalComments = results.countEntities();
+
+        for (int count = 0; count < maxComments && count < totalComments; count++) {
+            Entity entity = iter.next();
+
+            long id = entity.getKey().getId();
+            String content = (String) entity.getProperty("content");
+            long time = (long) entity.getProperty("time");
+            long thumbsup = (long) entity.getProperty("thumbsup");
+            long thumbsdown = (long) entity.getProperty("thumbsdown");
+
+            Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
+            comments.add(comment);
+        }
+
+        return comments;
+    }
+
     // Creates a Comment entity and stores it in the datastore
     private void createComment(String comment) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -178,7 +185,6 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("thumbsdown", 0);
         datastore.put(commentEntity);
     }
-
 
     // Creates an AllComments entity and stores it in the datastore
     private void createAllComments() {
