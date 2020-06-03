@@ -59,8 +59,10 @@ public final class DataServlet extends HttpServlet {
         long id = entity.getKey().getId();
         String content = (String) entity.getProperty("content");
         long time = (long) entity.getProperty("time");
+        long thumbsup = (long) entity.getProperty("thumbsup");
+        long thumbsdown = (long) entity.getProperty("thumbsdown");
 
-        Comment comment = new Comment(id, content, time);
+        Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
         comments.add(comment);
     }
 
@@ -126,6 +128,10 @@ public final class DataServlet extends HttpServlet {
 
     long timestamp = System.currentTimeMillis();
     commentEntity.setProperty("time", timestamp);
+
+    commentEntity.setProperty("thumbsup", 0);
+
+    commentEntity.setProperty("thumbsdown", 0);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
