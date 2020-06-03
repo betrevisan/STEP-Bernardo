@@ -156,6 +156,24 @@ public final class DataServlet extends HttpServlet {
 
         datastore.put(commentEntity);
 
+        // Get the all comments entity using its key
+        Entity allEntity;
+        try {
+            allEntity = datastore.get(allKey);
+        } catch(Exception e) {
+            response.setContentType("text/html;");
+            response.getWriter().println("Unable to get all comments entity.");
+            return;
+        }
+
+        long prevTotal = (long) allEntity.getProperty("total");
+
+        long newTotal = prevTotal + 1;
+
+        allEntity.setProperty("total", newTotal);
+
+        datastore.put(allEntity);
+
         // Respond with a success message
         response.setContentType("text/html;");
         response.getWriter().println("Your comment has been registered. Thank you!");
