@@ -51,6 +51,10 @@ function createCommentBox(comment) {
     const timeElement = document.createElement('small');
     timeElement.innerHTML = comment.time;
 
+    const topLineElement = document.createElement('div');
+    topLineElement.className = 'd-flex w-100 justify-content-between';
+    topLineElement.appendChild(timeElement);
+
     const upElement = document.createElement('small');
     upElement.innerHTML = comment.thumbsup;
 
@@ -80,13 +84,17 @@ function createCommentBox(comment) {
         downComment(comment);
     });
 
+    const buttonLineElement = document.createElement('div');
+    buttonLineElement.className = 'd-flex w-100 justify-content-between';
+    buttonLineElement.appendChild(upButtonElement);
+    buttonLineElement.appendChild(downButtonElement);
+    buttonLineElement.appendChild(deleteButtonElement);
+
+    commmentElement.appendChild(topLineElement);
     commmentElement.appendChild(contentElement);
-    commmentElement.appendChild(timeElement);
     commmentElement.appendChild(upElement);
     commmentElement.appendChild(downElement);
-    commmentElement.appendChild(deleteButtonElement);
-    commmentElement.appendChild(upButtonElement);
-    commmentElement.appendChild(downButtonElement);
+    commmentElement.appendChild(buttonLineElement);
     return commmentElement;
 }
 
