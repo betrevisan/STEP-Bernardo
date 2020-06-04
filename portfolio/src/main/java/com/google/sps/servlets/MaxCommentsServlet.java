@@ -47,12 +47,12 @@ public final class MaxCommentsServlet extends HttpServlet {
             try {
                 tempMax = Long.parseLong(max);
             } catch (NumberFormatException e) {
-                // Return if max was not numeric
+                // Return if max was not numeric.
                 response.sendRedirect("/contact.html");
                 return;
             }
 
-            // Only update maxComments if tempMax was not negative
+            // Only update maxComments if tempMax was not negative.
             if (tempMax > 0)
             {
                 changeAllCommentsMax(tempMax);
@@ -66,7 +66,7 @@ public final class MaxCommentsServlet extends HttpServlet {
         return;
     }
 
-    /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
+    // Returns the desired parameter entered by the user, or null if the user input was invalid.
     private String getParameter(HttpServletRequest request, String name, String defaultValue) {
         // Get the input from the form.
         String value = request.getParameter(name);
