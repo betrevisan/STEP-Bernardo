@@ -30,6 +30,9 @@ import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
@@ -81,6 +84,9 @@ public final class DataServlet extends HttpServlet {
             queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
         } else if (entityAllComments.getProperty("filter").equals("alphabetical")) {
             queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
+        } else {
+            Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, entityAllComments.getProperty("filter"));
+            queryComments = new Query("Comment").setFilter(searchFilter);
         }
 
         // Get prepared instance of the query
