@@ -37,7 +37,6 @@ public final class ThumbsUpServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.print("Got to doPost (up)");
         
         // Get comment's id (which was passed as a parameter)
         long id = Long.parseLong(request.getParameter("id"));
@@ -68,19 +67,19 @@ public final class ThumbsUpServlet extends HttpServlet {
         // Get the previous thumbs up value
         long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
 
+        long prevPopularity = (long) commentEntity.getProperty("popularity");
+
         long newThumbsUp = prevThumbsUp + 1;
 
-        System.out.println(newThumbsUp);
+        long newPopularity = prevPopularity + 1;
         
         // Update the thumbs up property to be the previous value plus one
         commentEntity.setProperty("thumbsup", newThumbsUp);
 
-        System.out.println(commentEntity);
-
+        commentEntity.setProperty("popularity", newPopularity);
 
         // Add the updated entity back in the datastore
         datastore.put(commentEntity);
-        System.out.println("Got to doPost (end)");
 
         response.sendRedirect("/contact.html");
         return;
