@@ -47,6 +47,8 @@
     </div>
 
     <div class="container-fluid bg-2 text-center">
+        <h3>Share</h3>
+        <p>Use the form below to share any ideas you might have had when reading through this portfolio in the form of a comment.</p>
         <form action="/data" method="POST">
             <p>Name (optional):</p>
             <textarea name="user-name" style="color: #555555;"></textarea>
@@ -61,6 +63,8 @@
     </div>
 
     <div class="container-fluid bg-3 text-center">
+        <h3>All Comments</h3>
+        
         <form action="/data" method="POST">
             <label for="max-comments">Number of comments:</label>
             <select name="max-comments" id="max-comments" onchange="this.form.submit()">

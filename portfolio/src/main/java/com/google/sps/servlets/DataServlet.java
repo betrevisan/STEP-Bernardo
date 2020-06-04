@@ -120,8 +120,17 @@ public final class DataServlet extends HttpServlet {
             response.sendRedirect("/contact.html");
             return;
         }
+
+        // Get the name input from the form.
+        String name = getParameter(request, "user-name", null);
+        // If the name field was left blank, change it to Anonymous
+        if (name.equals("")) {
+            name = "Anonymous";
+        }
+
+        System.out.println("Name: " + name);
         
-        // Get the input from the form.
+        // Get the comment input from the form.
         String comment = getParameter(request, "user-comment", null);
 
         // Return error message if the user did not input any comment.
