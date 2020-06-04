@@ -33,29 +33,12 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import java.util.Iterator;
 
-
-
 @WebServlet("/delete-data")
 public final class DeleteServlet extends HttpServlet {
-
-    private Key allKey;
-
-    @Override
-    public void init() {
-        // Query the AllComments entity
-        Query query = new Query("AllComments");
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
-
-        Iterator<Entity> iter = results.asIterator();
-        Entity entity = iter.next();
-        allKey = entity.getKey();
-    }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         long id = Long.parseLong(request.getParameter("id"));
-
         Key commentEntityKey = KeyFactory.createKey("Comment", id);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.delete(commentEntityKey);
@@ -66,22 +49,30 @@ public final class DeleteServlet extends HttpServlet {
         return;
     }
 
-    // Changes the value of the total property in AllComments and updates the datastore
+    // Changes the value of the total property in AllComments and updates the datastore.
     private void changeAllCommentsTotal(int value) {
+        Entity allCommentsEntity = getAllCommentsEntity();
+        long prevTotal = (long) allCommentsEntity.getProperty("total");
+        long newTotal = prevTotal + value;
+        allCommentsEntity.setProperty("total", newTotal);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(allCommentsEntity);
+    }
 
-        // Get the all comments entity using its key
-        Entity allEntity;
-        try {
-            allEntity = datastore.get(allKey);
-        } catch(Exception e) {
-            return;
+    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
+    private Entity getAllCommentsEntity() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+
+        // Return null if there are no AllComments entity.
+        if (resultsAllComments.countEntities() == 0) {
+            return null;
         }
 
-        long prevTotal = (long) allEntity.getProperty("total");
-        long newTotal = prevTotal + value;
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity allCommentsEntity = iterAllComments.next(); 
 
-        allEntity.setProperty("total", newTotal);
-        datastore.put(allEntity);
+        return allCommentsEntity;
     }
 }
