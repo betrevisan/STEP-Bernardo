@@ -83,6 +83,9 @@ function createCommentBox(comment) {
         deleteComment(comment);
 
         commmentElement.remove();
+        
+        // Reload page to update it
+        location.reload();
     });
 
     const upButtonElement = document.createElement('button');
@@ -90,6 +93,9 @@ function createCommentBox(comment) {
     upButtonElement.className = 'btn btn-default btn-lg';
     upButtonElement.addEventListener('click', () => {
         upComment(comment);
+
+        // Reload page to update it
+        location.reload();
     });
 
     const downButtonElement = document.createElement('button');
@@ -97,6 +103,9 @@ function createCommentBox(comment) {
     downButtonElement.className = 'btn btn-default btn-lg';
     downButtonElement.addEventListener('click', () => {
         downComment(comment);
+
+        // Reload page to update it
+        location.reload();
     });
 
     const buttonLineElement = document.createElement('div');
@@ -151,6 +160,9 @@ function createPaginationBox(i) {
     itemElement.appendChild(linkElement);
     itemElement.addEventListener('click', () => {
         changePages(i);
+
+        // Reload page to update it
+        location.reload();
     });
 
     return itemElement;

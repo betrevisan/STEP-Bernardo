@@ -137,9 +137,8 @@ public final class DataServlet extends HttpServlet {
         // Increase total of all comments by 1
         changeAllCommentsTotal(1);
 
-        // Respond with a success message
-        response.setContentType("text/html;");
-        response.getWriter().println("Your comment has been registered. Thank you!");
+        response.sendRedirect("/contact.html");
+        return;
     }
 
     /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
