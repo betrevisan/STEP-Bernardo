@@ -40,8 +40,6 @@ import com.google.appengine.api.datastore.KeyFactory;
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
-    private int maxComments = 10;
-
     @Override
     public void init() {
         Entity allCommentsEntity = getAllCommentsEntity();
