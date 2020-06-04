@@ -73,6 +73,14 @@ public final class DataServlet extends HttpServlet {
         if (entityAllComments.getProperty("filter").equals("recent")) {
             // Create a query instance
             queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("oldest")) {
+            queryComments = new Query("Comment").addSort("time", SortDirection.ASCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("top")) {
+            queryComments = new Query("Comment").addSort("popularity", SortDirection.DESCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("bottom")) {
+            queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("alphabetical")) {
+            queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
         }
 
         // Get prepared instance of the query
@@ -209,6 +217,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("time", timestamp);
         commentEntity.setProperty("thumbsup", 0);
         commentEntity.setProperty("thumbsdown", 0);
+        commentEntity.setProperty("popularity", 0);
         commentEntity.setProperty("name", name);
         datastore.put(commentEntity);
     }
