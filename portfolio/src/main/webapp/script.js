@@ -50,10 +50,15 @@ function createCommentBox(comment) {
     const timeElement = document.createElement('small');
     timeElement.innerHTML = new Date(comment.time);
 
+    const nameElement = document.createElement('h3');
+    nameElement.style.textAlign = 'left';
+    nameElement.innerHTML = comment.name;
+
     const topLineElement = document.createElement('div');
     topLineElement.className = 'd-flex w-100 justify-content-between';
     topLineElement.style.textAlign = 'right';
     topLineElement.appendChild(timeElement);
+    topLineElement.appendChild(nameElement);
 
     const upIconElement = document.createElement('span');
     upIconElement.className = 'glyphicon glyphicon-thumbs-up';
