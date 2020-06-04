@@ -66,10 +66,16 @@ public final class ThumbsDownServlet extends HttpServlet {
         // Get the previous thumbs down value
         long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
 
+        long prevPopularity = (long) commentEntity.getProperty("popularity");
+
         long newThumbsDown = prevThumbsDown + 1;
+
+        long newPopularity = prevPopularity - 1;
         
         // Update the thumbs down property to be the previous value plus one
         commentEntity.setProperty("thumbsdown", newThumbsDown);
+
+        commentEntity.setProperty("popularity", newPopularity);
 
         // Add the updated entity back in the datastore
         datastore.put(commentEntity);
