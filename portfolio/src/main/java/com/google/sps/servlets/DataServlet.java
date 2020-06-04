@@ -127,8 +127,6 @@ public final class DataServlet extends HttpServlet {
         if (name.equals("")) {
             name = "Anonymous";
         }
-
-        System.out.println("Name: " + name);
         
         // Get the comment input from the form.
         String comment = getParameter(request, "user-comment", null);
@@ -141,7 +139,7 @@ public final class DataServlet extends HttpServlet {
         }
     
         // If the user did submit a comment, add it to the datastore
-        createComment(comment);
+        createComment(comment, name);
 
         // Increase total of all comments by 1
         changeAllCommentsTotal(1);
@@ -197,7 +195,7 @@ public final class DataServlet extends HttpServlet {
     }
 
     // Creates a Comment entity and stores it in the datastore
-    private void createComment(String comment) {
+    private void createComment(String comment, String name) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("content", comment);
@@ -205,6 +203,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("time", timestamp);
         commentEntity.setProperty("thumbsup", 0);
         commentEntity.setProperty("thumbsdown", 0);
+        commentEntity.setProperty("name", name);
         datastore.put(commentEntity);
     }
 
