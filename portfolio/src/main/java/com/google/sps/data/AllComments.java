@@ -20,10 +20,12 @@ public final class AllComments {
   private long total;
   private long max;
   private long page;
+  private String filter;
 
-  public AllComments(long total, long max, long page) {
+  public AllComments(long total, long max, long page, String filter) {
     this.total = total;
     this.max = max;
     this.page = page;
+    this.filter = filter;
   }
 }
