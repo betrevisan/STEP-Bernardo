@@ -165,10 +165,14 @@ public final class DataServlet extends HttpServlet {
         PreparedQuery resultsAll = datastore.prepare(query);
         Iterator<Entity> allIter = resultsAll.asIterator();
         Entity allComments = allIter.next();
+        // Represents the page the user is currently in
         long page = (long) allComments.getProperty("page");
 
+        // Iterates over the results until the results are less than the limit on comments or until the end of all results
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
             Entity entity = iter.next();
+
+            // Only add comment when it is part of the page the user is currently in
             if (count >= (maxComments * (page - 1))) {
                 long id = entity.getKey().getId();
                 String content = (String) entity.getProperty("content");
