@@ -61,18 +61,24 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        // Create a query instance
-        Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
-
-        // Instantiate the datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity entityAllComments = iterAllComments.next();
+
+        Query queryComments = null;
+
+        // If the recent filter is selected, show most recent comments first 
+        if (entityAllComments.getProperty("filter").equals("recent")) {
+            // Create a query instance
+            queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+        }
 
         // Get prepared instance of the query
-        PreparedQuery results = datastore.prepare(query);
-
+        PreparedQuery resultsComments = datastore.prepare(queryComments);
         // Iterate over results
-        List<Comment> comments = iterateQuery(results);
+        List<Comment> comments = iterateQuery(resultsComments);
         
         // Convert to json
         String json = convertToJsonUsingGson(comments);
