@@ -101,33 +101,6 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
-        // Get the input from the form.
-        String max = getParameter(request, "max-comments", null);
-        // If a maximum number of comments has been selected, only update the maxComments variable and return.
-        if (max != null) {
-
-            int tempMax;
-
-            try {
-                tempMax = Integer.parseInt(max);
-            } catch (NumberFormatException e) {
-                // Return if max was not numeric
-                response.sendRedirect("/contact.html");
-                return;
-            }
-
-            // Only update maxComments if tempMax was not negative
-            if (tempMax > 0)
-            {
-                maxComments = tempMax;
-                changeAllCommentsMax(tempMax);
-            }
-
-            response.sendRedirect("/contact.html");
-            return;
-        }
-
         // Get the name input from the form.
         String name = getParameter(request, "user-name", null);
         // If the name field was left blank, change it to Anonymous
@@ -231,15 +204,6 @@ public final class DataServlet extends HttpServlet {
         long newTotal = prevTotal + value;
 
         allCommentsEntity.setProperty("total", newTotal);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(allCommentsEntity);
-    }
-
-    // Changes the value of the maximum number of comment per page property in AllComments and updates the datastore
-    private void changeAllCommentsMax(long newMax) {
-        Entity allCommentsEntity = getAllCommentsEntity();
-
-        allCommentsEntity.setProperty("max", newMax);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(allCommentsEntity);
     }
