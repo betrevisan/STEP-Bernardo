@@ -36,59 +36,47 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
-
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
 
     private int maxComments = 10;
-    private Key allKey;
 
     @Override
     public void init() {
-        // Query the AllComments entity
-        Query query = new Query("AllComments");
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
+        Entity allCommentsEntity = getAllCommentsEntity();
+        System.out.println(allCommentsEntity);
 
         // Only creates a new AllComments entity if one has not yet been created
-        if (results.countEntities() == 0) {
+        if (allCommentsEntity == null) {
+            System.out.println("creating new all comments");
             createAllComments();
-        } else {
-            // If there is already an entity in the datastore, simply store its key
-            Iterator<Entity> iter = results.asIterator();
-            Entity entity = iter.next();
-            allKey = entity.getKey();
         }
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity entityAllComments = iterAllComments.next();
+        Entity allCommentsEntity = getAllCommentsEntity();
 
         Query queryComments = null;
-
         // If the recent filter is selected, show most recent comments first 
-        if (entityAllComments.getProperty("filter").equals("recent")) {
+        if (allCommentsEntity.getProperty("filter").equals("recent")) {
             // Create a query instance
             queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
-        } else if (entityAllComments.getProperty("filter").equals("oldest")) {
+        } else if (allCommentsEntity.getProperty("filter").equals("oldest")) {
             queryComments = new Query("Comment").addSort("time", SortDirection.ASCENDING);
-        } else if (entityAllComments.getProperty("filter").equals("top")) {
+        } else if (allCommentsEntity.getProperty("filter").equals("top")) {
             queryComments = new Query("Comment").addSort("popularity", SortDirection.DESCENDING);
-        } else if (entityAllComments.getProperty("filter").equals("bottom")) {
+        } else if (allCommentsEntity.getProperty("filter").equals("bottom")) {
             queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
-        } else if (entityAllComments.getProperty("filter").equals("alphabetical")) {
+        } else if (allCommentsEntity.getProperty("filter").equals("alphabetical")) {
             queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
         } else {
-            Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, entityAllComments.getProperty("filter"));
+            Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, allCommentsEntity.getProperty("filter"));
             queryComments = new Query("Comment").setFilter(searchFilter);
         }
 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Get prepared instance of the query
         PreparedQuery resultsComments = datastore.prepare(queryComments);
         // Iterate over results
@@ -183,15 +171,10 @@ public final class DataServlet extends HttpServlet {
     private List<Comment> iterateQuery(PreparedQuery results) {
         List<Comment> comments = new ArrayList<>();
         Iterator<Entity> iter = results.asIterator();
-        int totalComments = results.countEntities();
-
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query query = new Query("AllComments");
-        PreparedQuery resultsAll = datastore.prepare(query);
-        Iterator<Entity> allIter = resultsAll.asIterator();
-        Entity allComments = allIter.next();
-        // Represents the page the user is currently in
-        long page = (long) allComments.getProperty("page");
+     
+        Entity allCommentsEntity = getAllCommentsEntity();
+        long totalComments = (long) allCommentsEntity.getProperty("total");
+        long page = (long) allCommentsEntity.getProperty("page");
 
         // Iterates over the results until the results are less than the limit on comments or until the end of all results
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
@@ -238,43 +221,43 @@ public final class DataServlet extends HttpServlet {
         // Comments are by default filter by most recent first
         allComments.setProperty("filter", "recent");
         datastore.put(allComments);
-
-        // Stores the key to the entity that stores information about all comments
-        allKey = allComments.getKey();
     }
 
     // Changes the value of the total property in AllComments and updates the datastore
     private void changeAllCommentsTotal(int value) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity allCommentsEntity = getAllCommentsEntity();
 
-        // Get the all comments entity using its key
-        Entity allEntity;
-        try {
-            allEntity = datastore.get(allKey);
-        } catch(Exception e) {
-            return;
-        }
-
-        long prevTotal = (long) allEntity.getProperty("total");
+        long prevTotal = (long) allCommentsEntity.getProperty("total");
         long newTotal = prevTotal + value;
 
-        allEntity.setProperty("total", newTotal);
-        datastore.put(allEntity);
+        allCommentsEntity.setProperty("total", newTotal);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(allCommentsEntity);
     }
 
     // Changes the value of the maximum number of comment per page property in AllComments and updates the datastore
     private void changeAllCommentsMax(long newMax) {
-         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity allCommentsEntity = getAllCommentsEntity();
 
-        // Get the all comments entity using its key
-        Entity allEntity;
-        try {
-            allEntity = datastore.get(allKey);
-        } catch(Exception e) {
-            return;
+        allCommentsEntity.setProperty("max", newMax);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        datastore.put(allCommentsEntity);
+    }
+
+    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist
+    private Entity getAllCommentsEntity() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+
+        // Return null if there are no AllComments entity
+        if (resultsAllComments.countEntities() == 0) {
+            return null;
         }
 
-        allEntity.setProperty("max", newMax);
-        datastore.put(allEntity);
-    } 
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity allCommentsEntity = iterAllComments.next(); 
+
+        return allCommentsEntity;
+    }
 }
