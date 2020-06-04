@@ -32,11 +32,9 @@ function addRandomAMSong() {
 
 function getComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
-        console.log(comments);
         comments.forEach((comment) => {
             document.getElementById('comments-list').appendChild(createCommentBox(comment));
         })
-        console.log(comments);
     });
 }
 
@@ -130,4 +128,36 @@ function downComment(comment) {
   const params = new URLSearchParams();
   params.append('id', comment.id);
   fetch('/thumbsdown-data', {method: 'POST', body: params});
+}
+
+function getPagination() {
+    fetch('/pagination').then(response => response.json()).then((info) => {
+        info.forEach((entity) => {
+            const buttons = Math.ceil(entity.total / entity.max);
+            for (var i = 0; i < buttons; i++) {
+                document.getElementById('pagination-list').appendChild(createPaginationBox(i));
+            }
+        })
+    });
+}
+
+function createPaginationBox(i) {
+    const linkElement = document.createElement('a');
+    linkElement.className = 'page-link';
+    linkElement.innerHTML = i + 1;
+
+    const itemElement = document.createElement('li');
+    itemElement.className = 'page-item';
+    itemElement.appendChild(linkElement);
+    itemElement.addEventListener('click', () => {
+        changePages(i);
+    });
+
+    return itemElement;
+}
+
+function changePages(i) {
+  const params = new URLSearchParams();
+  params.append('i', i);
+  fetch('/pagination', {method: 'POST', body: params});
 }

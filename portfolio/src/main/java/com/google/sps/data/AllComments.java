@@ -14,20 +14,16 @@
 
 package com.google.sps.data;
 
-/** A comment on my portfolio */
-public final class Comment {
+/** All comments on my portfolio */
+public final class AllComments {
 
-  private final long id;
-  private final String content;
-  private final long time;
-  private long thumbsup;
-  private long thumbsdown;
+  private long total;
+  private long max;
+  private long page;
 
-  public Comment(long id, String content, long time, long thumbsup, long thumbsdown) {
-    this.id = id;
-    this.content = content;
-    this.time = time;
-    this.thumbsup = thumbsup;
-    this.thumbsdown = thumbsdown;
+  public AllComments(long total, long max, long page) {
+    this.total = total;
+    this.max = max;
+    this.page = page;
   }
 }

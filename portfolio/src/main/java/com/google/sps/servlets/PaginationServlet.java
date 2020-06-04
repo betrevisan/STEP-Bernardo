@@ -21,67 +21,64 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
-import java.util.Iterator;
 
-
-
-@WebServlet("/delete-data")
-public final class DeleteServlet extends HttpServlet {
-
-    private Key allKey;
+@WebServlet("/pagination")
+public final class PaginationServlet extends HttpServlet {
 
     @Override
-    public void init() {
-        // Query the AllComments entity
-        Query query = new Query("AllComments");
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("AllComments");
         PreparedQuery results = datastore.prepare(query);
-
         Iterator<Entity> iter = results.asIterator();
         Entity entity = iter.next();
-        allKey = entity.getKey();
+
+        List<AllComments> info = new ArrayList<>();
+        long total = (long) entity.getProperty("total");
+        long max = (long) entity.getProperty("max");
+        long page = (long) entity.getProperty("page");
+        info.add(new AllComments(total, max, page));
+        System.out.println("got here");
+
+        // Convert to json
+        String json = convertToJsonUsingGson(info);
+        response.setContentType("application/json;");
+        response.getWriter().println(json);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        long id = Long.parseLong(request.getParameter("id"));
-
-        Key commentEntityKey = KeyFactory.createKey("Comment", id);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.delete(commentEntityKey);
+        Query query = new Query("AllComments");
+        PreparedQuery results = datastore.prepare(query);
+        Iterator<Entity> iter = results.asIterator();
+        Entity entity = iter.next();
 
-        changeAllCommentsTotal(-1);
+        long newPage = Long.parseLong(request.getParameter("i")) + 1;
+        entity.setProperty("page", newPage);
+        datastore.put(entity);
 
         response.sendRedirect("/contact.html");
         return;
     }
 
-    // Changes the value of the total property in AllComments and updates the datastore
-    private void changeAllCommentsTotal(int value) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        // Get the all comments entity using its key
-        Entity allEntity;
-        try {
-            allEntity = datastore.get(allKey);
-        } catch(Exception e) {
-            return;
-        }
-
-        long prevTotal = (long) allEntity.getProperty("total");
-        long newTotal = prevTotal + value;
-
-        allEntity.setProperty("total", newTotal);
-        datastore.put(allEntity);
+    /**
+    * Converts the comments array  into a JSON string using the Gson library. Note: We first added
+    * the Gson library dependency to pom.xml.
+    */
+    private String convertToJsonUsingGson(List<AllComments> allComments) {
+        Gson gson = new Gson();
+        String json = gson.toJson(allComments);
+        return json;
     }
 }
