@@ -16,6 +16,7 @@
 
  
 function initMap() {
+    var begin = {lat: 0, lng: 0};
     var poa = {lat: -30.035, lng: -51.218};
     var nhaven = {lat: 41.308, lng: -72.927};
     var beijing = {lat: 39.904, lng: 116.407};
@@ -31,8 +32,8 @@ function initMap() {
     var boston = {lat: 42.360, lng: -71.058};
 
     var map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 2,
-        center: poa
+        zoom: 3,
+        center: begin
     });
 
     var poaString = '<div id="content">'+
