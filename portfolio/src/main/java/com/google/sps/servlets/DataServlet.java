@@ -120,8 +120,15 @@ public final class DataServlet extends HttpServlet {
             response.sendRedirect("/contact.html");
             return;
         }
+
+        // Get the name input from the form.
+        String name = getParameter(request, "user-name", null);
+        // If the name field was left blank, change it to Anonymous
+        if (name.equals("")) {
+            name = "Anonymous";
+        }
         
-        // Get the input from the form.
+        // Get the comment input from the form.
         String comment = getParameter(request, "user-comment", null);
 
         // Return error message if the user did not input any comment.
@@ -132,7 +139,7 @@ public final class DataServlet extends HttpServlet {
         }
     
         // If the user did submit a comment, add it to the datastore
-        createComment(comment);
+        createComment(comment, name);
 
         // Increase total of all comments by 1
         changeAllCommentsTotal(1);
@@ -178,8 +185,9 @@ public final class DataServlet extends HttpServlet {
                 long time = (long) entity.getProperty("time");
                 long thumbsup = (long) entity.getProperty("thumbsup");
                 long thumbsdown = (long) entity.getProperty("thumbsdown");
+                String name = (String) entity.getProperty("name");
 
-                Comment comment = new Comment(id, content, time, thumbsup, thumbsdown);
+                Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name);
                 comments.add(comment);
             }
         }
@@ -188,7 +196,7 @@ public final class DataServlet extends HttpServlet {
     }
 
     // Creates a Comment entity and stores it in the datastore
-    private void createComment(String comment) {
+    private void createComment(String comment, String name) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("content", comment);
@@ -196,6 +204,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("time", timestamp);
         commentEntity.setProperty("thumbsup", 0);
         commentEntity.setProperty("thumbsdown", 0);
+        commentEntity.setProperty("name", name);
         datastore.put(commentEntity);
     }
 

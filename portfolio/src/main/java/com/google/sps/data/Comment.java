@@ -22,12 +22,14 @@ public final class Comment {
   private final long time;
   private long thumbsup;
   private long thumbsdown;
+  private final String name;
 
-  public Comment(long id, String content, long time, long thumbsup, long thumbsdown) {
+  public Comment(long id, String content, long time, long thumbsup, long thumbsdown, String name) {
     this.id = id;
     this.content = content;
     this.time = time;
     this.thumbsup = thumbsup;
     this.thumbsdown = thumbsdown;
+    this.name = name;
   }
 }
