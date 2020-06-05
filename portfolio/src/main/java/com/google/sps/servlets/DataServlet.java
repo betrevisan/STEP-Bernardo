@@ -69,7 +69,6 @@ public final class DataServlet extends HttpServlet {
             Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
             queryComments = new Query("Comment").setFilter(searchFilter);
         }
-
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery resultsComments = datastore.prepare(queryComments);
         List<Comment> comments = iterateQuery(resultsComments);
@@ -126,19 +125,21 @@ public final class DataServlet extends HttpServlet {
 
         // Iterates over the results until the results are less than the limit on comments or until the end of all results.
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
-            Entity entity = iter.next();
+            while (iter.hasNext()) {
+                Entity entity = iter.next();
 
-            // Only add comment when it is part of the page the user is currently in.
-            if (count >= (maxComments * (page - 1))) {
-                long id = entity.getKey().getId();
-                String content = (String) entity.getProperty("content");
-                long time = (long) entity.getProperty("time");
-                long thumbsup = (long) entity.getProperty("thumbsup");
-                long thumbsdown = (long) entity.getProperty("thumbsdown");
-                String name = (String) entity.getProperty("name");
+                // Only add comment when it is part of the page the user is currently in.
+                if (count >= (maxComments * (page - 1))) {
+                    long id = entity.getKey().getId();
+                    String content = (String) entity.getProperty("content");
+                    long time = (long) entity.getProperty("time");
+                    long thumbsup = (long) entity.getProperty("thumbsup");
+                    long thumbsdown = (long) entity.getProperty("thumbsdown");
+                    String name = (String) entity.getProperty("name");
 
-                Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name);
-                comments.add(comment);
+                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name);
+                    comments.add(comment);
+                }
             }
         }
 
