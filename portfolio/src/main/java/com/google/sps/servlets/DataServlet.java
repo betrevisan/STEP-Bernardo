@@ -55,20 +55,28 @@ public final class DataServlet extends HttpServlet {
         Query queryComments = null;
         String selectedFilter = (String) allCommentsEntity.getProperty("filter");
         // Assign the correct query to queryComments according to the filter settings in place. 
-        if (selectedFilter.equals("recent")) {
-            queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
-        } else if (selectedFilter.equals("oldest")) {
-            queryComments = new Query("Comment").addSort("time", SortDirection.ASCENDING);
-        } else if (selectedFilter.equals("top")) {
-            queryComments = new Query("Comment").addSort("popularity", SortDirection.DESCENDING);
-        } else if (selectedFilter.equals("bottom")) {
-            queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
-        } else if (selectedFilter.equals("alphabetical")) {
-            queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
-        } else {
-            Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
-            queryComments = new Query("Comment").setFilter(searchFilter);
+        switch (selectedFilter) {
+            case "recent":
+                queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+                break;
+            case "oldest":
+                queryComments = new Query("Comment").addSort("time", SortDirection.ASCENDING);
+                break;
+            case "top":
+                queryComments = new Query("Comment").addSort("popularity", SortDirection.DESCENDING);
+                break;
+            case "bottom":
+                queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
+                break;
+            case "alphabetical":
+                queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
+                break;
+            default:
+                Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
+                queryComments = new Query("Comment").setFilter(searchFilter);
+                break;
         }
+        
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery resultsComments = datastore.prepare(queryComments);
         List<Comment> comments = iterateQuery(resultsComments);
