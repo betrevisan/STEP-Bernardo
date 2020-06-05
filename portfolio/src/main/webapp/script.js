@@ -63,16 +63,18 @@ function createCommentBox(comment) {
     const upIconElement = document.createElement('span');
     upIconElement.className = 'glyphicon glyphicon-thumbs-up';
 
-    const upElement = document.createElement('small');
+    const upElement = document.createElement('p');
     upElement.innerHTML = comment.thumbsup;
-    upElement.style.padding = '40px';
+    upElement.style.display = 'inline';
+    upElement.style.padding = '20px';
     upElement.appendChild(upIconElement);
 
     const downIconElement = document.createElement('span');
     downIconElement.className = 'glyphicon glyphicon-thumbs-down';
 
-    const downElement = document.createElement('small');
+    const downElement = document.createElement('p');
     downElement.innerHTML = comment.thumbsdown;
+    downElement.style.display = 'inline';
     downElement.appendChild(downIconElement);
 
     const reactionsLineElement = document.createElement('div');
