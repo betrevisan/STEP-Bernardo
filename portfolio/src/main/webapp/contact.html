@@ -77,6 +77,26 @@
             <br><br>
         </form>
 
+        <form action="/filters" method="POST">
+            <label for="filter-comments">Filter:</label>
+            <select name="filter-comments" id="filter-comments" onchange="this.form.submit()">
+                <option value="recent">select</option>
+                <option value="recent">Most Recent</option>
+                <option value="oldest">Oldest</option>
+                <option value="top">Top Rated</option>
+                <option value="bottom">Bottom Rated</option>
+                <option value="alphabetical">Alphabetical by Name</option>
+            </select>-
+        </form>
+
+        <form action="/filters" method="POST">
+            <label for="filter-comments">Or search comments by name:</label>
+            <textarea name="filter-comments" id="filter-comments" style="color: #555555;"></textarea>
+            <br/><br/>
+
+            <input class="btn btn-default btn-lg" type="submit" />
+        </form>
+
         <ul class="list-group" id="comments-list"></ul>
 
         <nav>

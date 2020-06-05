@@ -30,6 +30,9 @@ import com.google.sps.data.Comment;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 
@@ -51,7 +54,6 @@ public final class DataServlet extends HttpServlet {
         // Only creates a new AllComments entity if one has not yet been created
         if (results.countEntities() == 0) {
             createAllComments();
-            System.out.println("created");
         } else {
             // If there is already an entity in the datastore, simply store its key
             Iterator<Entity> iter = results.asIterator();
@@ -62,18 +64,35 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-        // Create a query instance
-        Query query = new Query("Comment").addSort("time", SortDirection.DESCENDING);
-
-        // Instantiate the datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity entityAllComments = iterAllComments.next();
+
+        Query queryComments = null;
+
+        // If the recent filter is selected, show most recent comments first 
+        if (entityAllComments.getProperty("filter").equals("recent")) {
+            // Create a query instance
+            queryComments = new Query("Comment").addSort("time", SortDirection.DESCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("oldest")) {
+            queryComments = new Query("Comment").addSort("time", SortDirection.ASCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("top")) {
+            queryComments = new Query("Comment").addSort("popularity", SortDirection.DESCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("bottom")) {
+            queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
+        } else if (entityAllComments.getProperty("filter").equals("alphabetical")) {
+            queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
+        } else {
+            Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, entityAllComments.getProperty("filter"));
+            queryComments = new Query("Comment").setFilter(searchFilter);
+        }
 
         // Get prepared instance of the query
-        PreparedQuery results = datastore.prepare(query);
-
+        PreparedQuery resultsComments = datastore.prepare(queryComments);
         // Iterate over results
-        List<Comment> comments = iterateQuery(results);
+        List<Comment> comments = iterateQuery(resultsComments);
         
         // Convert to json
         String json = convertToJsonUsingGson(comments);
@@ -204,6 +223,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("time", timestamp);
         commentEntity.setProperty("thumbsup", 0);
         commentEntity.setProperty("thumbsdown", 0);
+        commentEntity.setProperty("popularity", 0);
         commentEntity.setProperty("name", name);
         datastore.put(commentEntity);
     }
@@ -215,6 +235,8 @@ public final class DataServlet extends HttpServlet {
         allComments.setProperty("total", 0);
         allComments.setProperty("max", maxComments);
         allComments.setProperty("page", 1);
+        // Comments are by default filter by most recent first
+        allComments.setProperty("filter", "recent");
         datastore.put(allComments);
 
         // Stores the key to the entity that stores information about all comments

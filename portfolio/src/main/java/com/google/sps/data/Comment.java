@@ -22,6 +22,7 @@ public final class Comment {
   private final long time;
   private long thumbsup;
   private long thumbsdown;
+  private long popularity;
   private final String name;
 
   public Comment(long id, String content, long time, long thumbsup, long thumbsdown, String name) {
@@ -30,6 +31,7 @@ public final class Comment {
     this.time = time;
     this.thumbsup = thumbsup;
     this.thumbsdown = thumbsdown;
+    this.popularity = thumbsup - thumbsdown;
     this.name = name;
   }
 }

@@ -21,67 +21,50 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
-@WebServlet("/thumbsup-data")
-public final class ThumbsUpServlet extends HttpServlet {
+@WebServlet("/filters")
+public final class FiltersServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
-        // Get comment's id (which was passed as a parameter)
-        long id = Long.parseLong(request.getParameter("id"));
+        // Get the filter input from the form.
+        String filter = getParameter(request, "filter-comments", null);
 
-        // Using the id, get the comment's key
-        Key commentEntityKey;
-        try {
-            commentEntityKey = KeyFactory.createKey("Comment", id);
-        } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment's key.");
-            return;
-        }
-
-        // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity entityAllComments = iterAllComments.next();
 
-        // Get the comment entity using its key
-        Entity commentEntity;
-        try {
-            commentEntity = datastore.get(commentEntityKey);
-        } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment.");
-            return;
-        }
-
-        // Get the previous thumbs up value
-        long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
-
-        long prevPopularity = (long) commentEntity.getProperty("popularity");
-
-        long newThumbsUp = prevThumbsUp + 1;
-
-        long newPopularity = prevPopularity + 1;
-        
-        // Update the thumbs up property to be the previous value plus one
-        commentEntity.setProperty("thumbsup", newThumbsUp);
-
-        commentEntity.setProperty("popularity", newPopularity);
+        // Update the filter property
+        entityAllComments.setProperty("filter", filter);
 
         // Add the updated entity back in the datastore
-        datastore.put(commentEntity);
+        datastore.put(entityAllComments);
 
         response.sendRedirect("/contact.html");
         return;
+    }
+
+    /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
+    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+        // Get the input from the form.
+        String value = request.getParameter(name);
+
+        if (value == null) {
+            return defaultValue;
+        }
+
+        return value;
     }
 }
