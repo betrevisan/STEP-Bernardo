@@ -125,7 +125,7 @@ public final class DataServlet extends HttpServlet {
 
         // Iterates over the results until the results are less than the limit on comments or until the end of all results.
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
-            while (iter.hasNext()) {
+            if (iter.hasNext()) {
                 Entity entity = iter.next();
 
                 // Only add comment when it is part of the page the user is currently in.
