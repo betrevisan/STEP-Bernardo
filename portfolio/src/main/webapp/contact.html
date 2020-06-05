@@ -56,7 +56,7 @@
                 <label for="user-name" class="col-sm-2 col-form-label">Name:</label>
                 <div class="col-sm-10" style="text-align:left;">
                     <input type="text" class="form-control" name="user-name" id="user-name" style="color: #555555;" aria-describedby="name-description" placeholder="Enter name">
-                    <small id="name-description" class="form-text text-muted" style="color: #ffffff;">This field is optional. If you choose to omit it, your comment will be posted as "Anonymous".</small>
+                    <small id="name-description" class="form-text text-muted" style="color: #ffffff; text-align: left;">This field is optional. If you choose to omit it, your comment will be posted as "Anonymous".</small>
                 </div>
             </div>
             
@@ -75,35 +75,46 @@
         <h3>All Comments</h3>
         
         <form action="/max-comments" method="POST">
-            <label for="max-comments">Number of comments:</label>
-            <select name="max-comments" id="max-comments" onchange="this.form.submit()">
-                <option value="10">select</option>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-            </select>
-            <br><br>
+            <div class="form-group row">
+                <label for="max-comments" class="col-sm-2 col-form-label">Number of comments:</label>
+                <div class="col-sm-10">
+                    <select class="custom-select form-control" name="max-comments" id="max-comments" onchange="this.form.submit()">
+                        <option selected>select</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                </div>
+            </div>
         </form>
 
         <form action="/filters" method="POST">
-            <label for="filter-comments">Filter:</label>
-            <select name="filter-comments" id="filter-comments" onchange="this.form.submit()">
-                <option value="recent">select</option>
-                <option value="recent">Most Recent</option>
-                <option value="oldest">Oldest</option>
-                <option value="top">Top Rated</option>
-                <option value="bottom">Bottom Rated</option>
-                <option value="alphabetical">Alphabetical by Name</option>
-            </select>-
+            <div class="form-group row">
+                <label for="filter-comments" class="col-sm-2 col-form-label">Filter:</label>
+                <div class="col-sm-10">
+                    <select class="custom-select form-control" name="filter-comments" id="filter-comments" onchange="this.form.submit()">
+                        <option selected>select</option>
+                        <option value="recent">Most Recent</option>
+                        <option value="oldest">Oldest</option>
+                        <option value="top">Top Rated</option>
+                        <option value="bottom">Bottom Rated</option>
+                        <option value="alphabetical">Alphabetical by Name</option>
+                    </select>
+                </div>
+            </div>
         </form>
 
         <form action="/filters" method="POST">
-            <label for="filter-comments">Or search comments by name:</label>
-            <textarea name="filter-comments" id="filter-comments" style="color: #555555;"></textarea>
-            <br/><br/>
-
-            <input class="btn btn-default btn-lg" type="submit" />
+            <div class="form-group row">
+                <label for="filter-comments" class="col-sm-2 col-form-label">Or search comments by name:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" name="filter-comments" id="filter-comments" style="color: #555555;" placeholder="Search">
+                </div>
+                <div class="col-sm-2">
+                    <input class="btn btn-default btn-lg" type="submit" />
+                </div>
+            </div>
         </form>
 
         <ul class="list-group" id="comments-list"></ul>
