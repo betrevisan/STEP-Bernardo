@@ -37,11 +37,10 @@ public final class ThumbsUpServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        
-        // Get comment's id (which was passed as a parameter)
+        // Get comment's id (which was passed as a parameter).
         long id = Long.parseLong(request.getParameter("id"));
 
-        // Using the id, get the comment's key
+        // Using the id, get the comment's key.
         Key commentEntityKey;
         try {
             commentEntityKey = KeyFactory.createKey("Comment", id);
@@ -51,10 +50,10 @@ public final class ThumbsUpServlet extends HttpServlet {
             return;
         }
 
-        // Instantiate datastore
+        // Instantiate datastore.
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        // Get the comment entity using its key
+        // Get the comment entity using its key.
         Entity commentEntity;
         try {
             commentEntity = datastore.get(commentEntityKey);
@@ -64,21 +63,19 @@ public final class ThumbsUpServlet extends HttpServlet {
             return;
         }
 
-        // Get the previous thumbs up value
+        // Get the previous thumbs up value.
         long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
-
+        // Get the previous popularity value.
         long prevPopularity = (long) commentEntity.getProperty("popularity");
-
         long newThumbsUp = prevThumbsUp + 1;
-
         long newPopularity = prevPopularity + 1;
         
         // Update the thumbs up property to be the previous value plus one
         commentEntity.setProperty("thumbsup", newThumbsUp);
-
+        // Update the popularity property to be the previous one plus one.
         commentEntity.setProperty("popularity", newPopularity);
 
-        // Add the updated entity back in the datastore
+        // Add the updated entity back in the datastore.
         datastore.put(commentEntity);
 
         response.sendRedirect("/contact.html");

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -38,33 +39,40 @@ public final class FiltersServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the filter input from the form.
-        String filter = getParameter(request, "filter-comments", null);
+        String filter = getParameter(request, "filter-comments", null).orElse(null);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity entityAllComments = iterAllComments.next();
+        Entity allCommentsEntity = getAllCommentsEntity();
 
         // Update the filter property
-        entityAllComments.setProperty("filter", filter);
-
+        allCommentsEntity.setProperty("filter", filter);
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
-        datastore.put(entityAllComments);
+        datastore.put(allCommentsEntity);
 
         response.sendRedirect("/contact.html");
         return;
     }
 
-    /** Returns the desired parameter entered by the user, or null if the user input was invalid. */
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-        // Get the input from the form.
+    // Returns the desired parameter entered by the user, or null if the user input was invalid.
+    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
+        return Optional.ofNullable(value);
+    }
 
-        if (value == null) {
-            return defaultValue;
+    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
+    private Entity getAllCommentsEntity() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query queryAllComments = new Query("AllComments");
+        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+
+        // Return null if there are no AllComments entity.
+        if (resultsAllComments.countEntities() == 0) {
+            return null;
         }
 
-        return value;
+        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
+        Entity allCommentsEntity = iterAllComments.next(); 
+
+        return allCommentsEntity;
     }
 }
