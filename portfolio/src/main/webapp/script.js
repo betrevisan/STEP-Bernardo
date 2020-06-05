@@ -62,6 +62,12 @@ function createCommentBox(comment) {
 
     const upIconElement = document.createElement('span');
     upIconElement.className = 'glyphicon glyphicon-thumbs-up';
+    upIconElement.addEventListener('click', () => {
+        upComment(comment);
+
+        // Reload page to update it
+        location.reload();
+    });
 
     const upElement = document.createElement('p');
     upElement.innerHTML = comment.thumbsup;
@@ -71,6 +77,12 @@ function createCommentBox(comment) {
 
     const downIconElement = document.createElement('span');
     downIconElement.className = 'glyphicon glyphicon-thumbs-down';
+    downIconElement.addEventListener('click', () => {
+        downComment(comment);
+
+        // Reload page to update it
+        location.reload();
+    });
 
     const downElement = document.createElement('p');
     downElement.innerHTML = comment.thumbsdown;
@@ -85,6 +97,7 @@ function createCommentBox(comment) {
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
+    reactionsLineElement.style.textAlign = 'right';
     deleteButtonElement.className = 'btn btn-default btn-lg';
     deleteButtonElement.addEventListener('click', () => {
         deleteComment(comment);
@@ -95,30 +108,9 @@ function createCommentBox(comment) {
         location.reload();
     });
 
-    const upButtonElement = document.createElement('button');
-    upButtonElement.innerText = 'Thumbs Up';
-    upButtonElement.className = 'btn btn-default btn-lg';
-    upButtonElement.addEventListener('click', () => {
-        upComment(comment);
-
-        // Reload page to update it
-        location.reload();
-    });
-
-    const downButtonElement = document.createElement('button');
-    downButtonElement.innerText = 'Thumbs Down';
-    downButtonElement.className = 'btn btn-default btn-lg';
-    downButtonElement.addEventListener('click', () => {
-        downComment(comment);
-
-        // Reload page to update it
-        location.reload();
-    });
-
+    
     const buttonLineElement = document.createElement('div');
     buttonLineElement.className = 'd-flex w-100 justify-content-between';
-    buttonLineElement.appendChild(upButtonElement);
-    buttonLineElement.appendChild(downButtonElement);
     buttonLineElement.appendChild(deleteButtonElement);
 
     commmentElement.appendChild(topLineElement);
