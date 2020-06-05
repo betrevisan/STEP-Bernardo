@@ -31,6 +31,8 @@ function initMap() {
     var bedford = {lat: 52.138, lng: -0.466};
     var boston = {lat: 42.360, lng: -71.058};
 
+    var openWindow = null;
+
     var map = new google.maps.Map(document.getElementById("map"), {
         zoom: 3,
         center: begin
@@ -311,53 +313,76 @@ function initMap() {
     
     poaMarker.addListener('click', function() {
         poaInfo.open(map, poaMarker);
+        windowManager(poaInfo);
     });
 
     nhavenMarker.addListener('click', function() {
         nhavenInfo.open(map, nhavenMarker);
+        windowManager(nhavenInfo);
     });
 
     beijingMarker.addListener('click', function() {
         beijingInfo.open(map, beijingMarker);
+        windowManager(beijingInfo);
     });
 
     trevisoMarker.addListener('click', function() {
         trevisoInfo.open(map, trevisoMarker);
+        windowManager(trevisoInfo);
     });
 
     singaporeMarker.addListener('click', function() {
         singaporeInfo.open(map, singaporeMarker);
+        windowManager(singaporeInfo);
     });
 
     munichMarker.addListener('click', function() {
         munichInfo.open(map, munichMarker);
+        windowManager(munichInfo);
     });
 
     vancouverMarker.addListener('click', function() {
         vancouverInfo.open(map, vancouverMarker);
+        windowManager(vancouverInfo);
     });
 
     lucknowMarker.addListener('click', function() {
         lucknowInfo.open(map, lucknowMarker);
+        windowManager(lucknowInfo);
     });
 
     torresMarker.addListener('click', function() {
         torresInfo.open(map, torresMarker);
+        windowManager(torresInfo);
     });
 
     sfMarker.addListener('click', function() {
         sfInfo.open(map, sfMarker);
+        windowManager(sfInfo);
     });
 
     spMarker.addListener('click', function() {
         spInfo.open(map, spMarker);
+        windowManager(spMarker);
     });
 
     bedfordMarker.addListener('click', function() {
         bedfordInfo.open(map, bedfordMarker);
+        windowManager(bedfordInfo);
     });
 
     bostonMarker.addListener('click', function() {
         bostonInfo.open(map, bostonMarker);
+        windowManager(bostonInfo);
     });
+
+    function windowManager(newWindow) {
+        if (openWindow != null) {
+            openWindow.close();
+            openWindow = newWindow;
+        }
+        else {
+            openWindow = newWindow;
+        }
+    }
 }
