@@ -73,21 +73,39 @@
         <p>I am currently reading <a href="https://en.wikipedia.org/wiki/The_Scarlet_Letter" target="_blank">The Scarlet Letter</a> by 
         Nathaniel Hawthorne</p>
 
-        <img id="current-book" src="images/scarletLetter.jpg"/>
+        <img id="current-book" src="images/scarletLetter.jpg" target="popup" onclick="window.open('images/scarletLetter.jpg','popup','width=600,height=600'); return false;"/>
     </div>
 
     <div class="container-fluid bg-2 text-center margin">
         <h4>My favorite books:</h4>
         <div class="gallery">
-            <a href="images/alchemist.jpg" target="_blank"><img src="images/alchemist.jpg"/></a>
-            <a href="images/blindness.jpg" target="_blank"><img src="images/blindness.jpg"/></a>
-            <a href="images/continente.jpg" target="_blank"><img src="images/continente.jpg"/></a>
-            <a href="images/hp.jpg" target="_blank"><img src="images/hp.jpg"/></a>
-            <a href="images/perks.jpg" target="_blank"><img src="images/perks.jpg"/></a>
-            <a href="images/persuasion.jpeg" target="_blank"><img src="images/persuasion.jpeg"/></a>
-            <a href="images/poe.jpg" target="_blank"><img src="images/poe.jpg"/></a>
-            <a href="images/saturday.jpg" target="_blank"><img src="images/saturday.jpg"/></a>
-            <a href="images/cortico.jpg" target="_blank"><img src="images/cortico.jpg"/></a>
+            <a href="images/alchemist.jpg" target="popup" onclick="window.open('images/alchemist.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/alchemist.jpg"/>
+            </a>
+            <a href="images/blindness.jpg" target="popup" onclick="window.open('images/blindness.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/blindness.jpg"/>
+            </a>
+            <a href="images/continente.jpg" target="popup" onclick="window.open('images/continente.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/continente.jpg"/>
+            </a>
+            <a href="images/hp.jpg" target="popup" onclick="window.open('images/hp.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/hp.jpg"/>
+            </a>
+            <a href="images/perks.jpg" target="popup" onclick="window.open('images/perks.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/perks.jpg"/>
+            </a>
+            <a href="images/persuasion.jpeg" target="popup" onclick="window.open('images/persuasion.jpeg','popup','width=600,height=600'); return false;">
+                <img src="images/persuasion.jpeg"/>
+            </a>
+            <a href="images/poe.jpg" target="popup" onclick="window.open('images/poe.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/poe.jpg"/>
+            </a>
+            <a href="images/saturday.jpg" target="popup" onclick="window.open('images/saturday.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/saturday.jpg"/>
+            </a>
+            <a href="images/cortico.jpg" target="popup" onclick="window.open('images/cortico.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/cortico.jpg"/>
+            </a>
         </div>
     </div>
 
@@ -112,6 +130,7 @@
         <p>My favorite band is Artic Monkeys! I would like to share some of their music with you. Click the button below to generate a random Arctic Monkeys song:</p>
         <button class="btn btn-default btn-lg" onclick="addRandomAMSong()"><span class="glyphicon glyphicon-music"></span> Find</button>
         <div id="song-container"></div>
+        <iframe width="420" height="315" id="song-video" style="display:none;"></iframe>
     </div>
 
     <div class="container-fluid bg-2 text-center margin">
@@ -120,34 +139,90 @@
         <h4>Here are some photographs I've taken over the years</h4>
         <p>Click on any of the photographs in this gallery to be able to see them on a larger scale in a new tab.</p>
         <div class="gallery">
-            <a href="images/1.jpg" target="_blank"><img src="images/1.jpg"/></a>
-            <a href="images/2.jpg" target="_blank"><img src="images/2.jpg"/></a>
-            <a href="images/3.jpg" target="_blank"><img src="images/3.jpg"/></a>
-            <a href="images/4.jpg" target="_blank"><img src="images/4.jpg"/></a>
-            <a href="images/5.jpg" target="_blank"><img src="images/5.jpg"/></a>
-            <a href="images/6.jpg" target="_blank"><img src="images/6.jpg"/></a>
-            <a href="images/7.jpg" target="_blank"><img src="images/7.jpg"/></a>
-            <a href="images/8.jpg" target="_blank"><img src="images/8.jpg"/></a>
-            <a href="images/9.jpg" target="_blank"><img src="images/9.jpg"/></a>
-            <a href="images/10.jpg" target="_blank"><img src="images/10.jpg"/></a>
-            <a href="images/11.jpg" target="_blank"><img src="images/11.jpg"/></a>
-            <a href="images/12.jpg" target="_blank"><img src="images/12.jpg"/></a>
-            <a href="images/13.jpg" target="_blank"><img src="images/13.jpg"/></a>
-            <a href="images/14.jpg" target="_blank"><img src="images/14.jpg"/></a>
-            <a href="images/15.jpg" target="_blank"><img src="images/15.jpg"/></a>
-            <a href="images/16.jpg" target="_blank"><img src="images/16.jpg"/></a>
-            <a href="images/17.jpg" target="_blank"><img src="images/17.jpg"/></a>
-            <a href="images/18.jpg" target="_blank"><img src="images/18.jpg"/></a>
-            <a href="images/19.jpg" target="_blank"><img src="images/19.jpg"/></a>
-            <a href="images/20.jpg" target="_blank"><img src="images/20.jpg"/></a>
-            <a href="images/21.jpg" target="_blank"><img src="images/21.jpg"/></a>
-            <a href="images/22.jpg" target="_blank"><img src="images/22.jpg"/></a>
-            <a href="images/23.jpg" target="_blank"><img src="images/23.jpg"/></a>
-            <a href="images/24.jpg" target="_blank"><img src="images/24.jpg"/></a>
-            <a href="images/25.jpg" target="_blank"><img src="images/25.jpg"/></a>
-            <a href="images/26.jpg" target="_blank"><img src="images/26.jpg"/></a>
-            <a href="images/27.jpg" target="_blank"><img src="images/27.jpg"/></a>
-            <a href="images/28.jpg" target="_blank"><img src="images/28.jpg"/></a>
+            <a href="images/1.jpg" target="popup" onclick="window.open('images/1.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/1.jpg"/>
+            </a>
+            <a href="images/2.jpg" target="popup" onclick="window.open('images/2.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/2.jpg"/>
+            </a>
+            <a href="images/3.jpg" target="popup" onclick="window.open('images/3.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/3.jpg"/>
+            </a>
+            <a href="images/4.jpg" target="popup" onclick="window.open('images/4.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/4.jpg"/>
+            </a>
+            <a href="images/5.jpg" target="popup" onclick="window.open('images/5.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/5.jpg"/>
+            </a>
+            <a href="images/6.jpg" target="popup" onclick="window.open('images/6.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/6.jpg"/>
+            </a>
+            <a href="images/7.jpg" target="popup" onclick="window.open('images/7.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/7.jpg"/>
+            </a>
+            <a href="images/8.jpg" target="popup" onclick="window.open('images/8.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/8.jpg"/>
+            </a>
+            <a href="images/9.jpg" target="popup" onclick="window.open('images/9.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/9.jpg"/>
+            </a>
+            <a href="images/10.jpg" target="popup" onclick="window.open('images/10.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/10.jpg"/>
+            </a>
+            <a href="images/11.jpg" target="popup" onclick="window.open('images/11.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/11.jpg"/>
+            </a>
+            <a href="images/12.jpg" target="popup" onclick="window.open('images/12.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/12.jpg"/>
+            </a>
+            <a href="images/13.jpg" target="popup" onclick="window.open('images/13.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/13.jpg"/>
+            </a>
+            <a href="images/14.jpg" target="popup" onclick="window.open('images/14.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/14.jpg"/>
+            </a>
+            <a href="images/15.jpg" target="popup" onclick="window.open('images/15.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/15.jpg"/>
+            </a>
+            <a href="images/16.jpg" target="popup" onclick="window.open('images/16.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/16.jpg"/>
+            </a>
+            <a href="images/17.jpg" target="popup" onclick="window.open('images/17.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/17.jpg"/>
+            </a>
+            <a href="images/18.jpg" target="popup" onclick="window.open('images/18.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/18.jpg"/>
+            </a>
+            <a href="images/19.jpg" target="popup" onclick="window.open('images/19.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/19.jpg"/>
+            </a>
+            <a href="images/20.jpg" target="popup" onclick="window.open('images/20.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/20.jpg"/>
+            </a>
+            <a href="images/21.jpg" target="popup" onclick="window.open('images/21.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/21.jpg"/>
+            </a>
+            <a href="images/22.jpg" target="popup" onclick="window.open('images/22.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/22.jpg"/>
+            </a>
+            <a href="images/23.jpg" target="popup" onclick="window.open('images/23.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/23.jpg"/>
+            </a>
+            <a href="images/24.jpg" target="popup" onclick="window.open('images/24.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/24.jpg"/>
+            </a>
+            <a href="images/25.jpg" target="popup" onclick="window.open('images/25.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/25.jpg"/>
+            </a>
+            <a href="images/26.jpg" target="popup" onclick="window.open('images/26.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/26.jpg"/>
+            </a>
+            <a href="images/27.jpg" target="popup" onclick="window.open('images/27.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/27.jpg"/>
+            </a>
+            <a href="images/28.jpg" target="popup" onclick="window.open('images/28.jpg','popup','width=600,height=600'); return false;">
+                <img src="images/28.jpg"/>
+            </a>
         </div>
     </div>
 
