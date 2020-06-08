@@ -150,8 +150,9 @@ public final class DataServlet extends HttpServlet {
                     long thumbsup = (long) entity.getProperty("thumbsup");
                     long thumbsdown = (long) entity.getProperty("thumbsdown");
                     String name = (String) entity.getProperty("name");
+                    String email = (String) entity.getProperty("email");
 
-                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name);
+                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name, email);
                     comments.add(comment);
                 }
             }
