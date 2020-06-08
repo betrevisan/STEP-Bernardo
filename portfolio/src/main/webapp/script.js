@@ -186,6 +186,10 @@ function getSubmitForm() {
     fetch("/login-status").then(response => response.json()).then((loginInfo) => {
         // Display submit comment form only if the user is logged in. Otherwise, display login form.
         if (loginInfo.status === "True") {
+            if (loginInfo.username === "null") {
+                window.location.replace("/username.html");
+                return;
+            }
             const submitForm = document.getElementById("submit-comment-form");
             submitForm.style.display = 'block';
             const logoutHREF = document.getElementById("logout-href");
