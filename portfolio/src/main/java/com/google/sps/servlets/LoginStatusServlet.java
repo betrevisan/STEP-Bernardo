@@ -28,20 +28,16 @@ public class LoginStatusServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("text/html");
+        response.setContentType("application/json;");
 
         UserService userService = UserServiceFactory.getUserService();
 
         if (userService.isUserLoggedIn()) {
-            response.getWriter().println("User is logged in.");
-            String logoutUrl = userService.createLogoutURL("/login-status");
-
-            response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
+            String logoutUrl = userService.createLogoutURL("/contact.html");
+            response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
         } else {
-            response.getWriter().println("User is not logged in.");
-
-            String loginUrl = userService.createLoginURL("/login-status");
-            response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
+            String loginUrl = userService.createLoginURL("/contact.html");
+            response.getWriter().println("{\"status\": \"False\", \"loginUrl\": \"" + loginUrl + "\"}");
         }
     }
 
