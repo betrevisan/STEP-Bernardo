@@ -17,6 +17,8 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -35,6 +37,11 @@ public class UsernameServlet extends HttpServlet {
         }
 
         String username = request.getParameter("user-username");
+        // Ask for username again if the username chosen was not available.
+        if (usernameCheck(username).equals(false)) {
+            response.sendRedirect("/contact.html");
+            return;
+        }
         String id = userService.getCurrentUser().getUserId();
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -44,5 +51,20 @@ public class UsernameServlet extends HttpServlet {
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");
+    }
+
+    // Returns the true if the username is available to be used, otherwise returns false.
+    private Boolean usernameCheck(String username) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("username", Query.FilterOperator.EQUAL, username);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity entity = results.asSingleEntity(); 
+
+        if (entity == null) {
+            return true;
+        } else {
+            return false;
+        }    
     }
 }
