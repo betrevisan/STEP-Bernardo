@@ -17,6 +17,8 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.*;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -34,11 +36,31 @@ public class LoginStatusServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             String logoutUrl = userService.createLogoutURL("/contact.html");
-            response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
+            String username = getUsername(userService.getCurrentUser().getUserId());
+            if (username == null) {
+                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");
+            } else {
+                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
+            }
         } else {
             String loginUrl = userService.createLoginURL("/contact.html");
             response.getWriter().println("{\"status\": \"False\", \"loginUrl\": \"" + loginUrl + "\"}");
         }
     }
 
+    // Returns the username that corresponds to the id that was given or null if there is no username linked to that id.
+    private String getUsername(String id) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity entity = results.asSingleEntity(); 
+
+        if (entity == null) {
+            return null;
+        }
+
+        String username = (String) entity.getProperty("username");
+        return username;     
+    }
 }
