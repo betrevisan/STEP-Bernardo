@@ -34,9 +34,15 @@ public class LoginStatusServlet extends HttpServlet {
 
         if (userService.isUserLoggedIn()) {
             response.getWriter().println("User is logged in.");
+            String logoutUrl = userService.createLogoutURL("/login-status");
+
+            response.getWriter().println("<p>Logout <a href=\"" + logoutUrl + "\">here</a>.</p>");
         } else {
             response.getWriter().println("User is not logged in.");
+
+            String loginUrl = userService.createLoginURL("/login-status");
+            response.getWriter().println("<p>Login <a href=\"" + loginUrl + "\">here</a>.</p>");
         }
     }
-    
+
 }
