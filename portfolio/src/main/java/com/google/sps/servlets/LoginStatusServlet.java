@@ -26,4 +26,17 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/login-status")
 public class LoginStatusServlet extends HttpServlet {
 
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html");
+
+        UserService userService = UserServiceFactory.getUserService();
+
+        if (userService.isUserLoggedIn()) {
+            response.getWriter().println("User is logged in.");
+        } else {
+            response.getWriter().println("User is not logged in.");
+        }
+    }
+    
 }
