@@ -24,8 +24,9 @@ public final class Comment {
   private long thumbsdown;
   private long popularity;
   private final String name;
+  private final String email;
 
-  public Comment(long id, String content, long time, long thumbsup, long thumbsdown, String name) {
+  public Comment(long id, String content, long time, long thumbsup, long thumbsdown, String name, String email) {
     this.id = id;
     this.content = content;
     this.time = time;
@@ -33,5 +34,6 @@ public final class Comment {
     this.thumbsdown = thumbsdown;
     this.popularity = thumbsup - thumbsdown;
     this.name = name;
+    this.email = email;
   }
 }
