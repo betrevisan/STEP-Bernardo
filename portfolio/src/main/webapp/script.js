@@ -61,13 +61,25 @@ function createCommentBox(comment) {
 
     const nameElement = document.createElement('h3');
     nameElement.style.textAlign = 'left';
+    nameElement.style.display = 'inline';
     nameElement.innerHTML = comment.name;
+
+    const usernameElement = document.createElement('h3');
+    usernameElement.style.textAlign = 'left';
+    usernameElement.style.display = 'inline';
+    usernameElement.style.padding = '30px';
+    usernameElement.innerHTML = "(@" + comment.username + ")";
 
     const topLineElement = document.createElement('div');
     topLineElement.className = 'd-flex w-100 justify-content-between';
     topLineElement.style.textAlign = 'right';
     topLineElement.appendChild(timeElement);
-    topLineElement.appendChild(nameElement);
+
+    const nameLineElement = document.createElement('div');
+    nameLineElement.className = 'd-flex w-100 justify-content-between';
+    nameLineElement.style.textAlign = 'left';
+    nameLineElement.appendChild(nameElement);
+    nameLineElement.appendChild(usernameElement);
 
     const upIconElement = document.createElement('span');
     upIconElement.className = 'glyphicon glyphicon-thumbs-up';
@@ -123,6 +135,7 @@ function createCommentBox(comment) {
     buttonLineElement.appendChild(deleteButtonElement);
 
     commmentElement.appendChild(topLineElement);
+    commmentElement.appendChild(nameLineElement);
     commmentElement.appendChild(contentElement);
     commmentElement.appendChild(reactionsLineElement);
     commmentElement.appendChild(buttonLineElement);
