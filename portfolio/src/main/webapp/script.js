@@ -41,6 +41,7 @@ function addRandomAMSong() {
 
 function getComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
+        console.log(comments);
         comments.forEach((comment) => {
             document.getElementById('comments-list').appendChild(createCommentBox(comment));
         })
@@ -180,4 +181,23 @@ function changePages(i) {
   const params = new URLSearchParams();
   params.append('i', i);
   fetch('/pagination', {method: 'POST', body: params});
+}
+
+function getSubmitForm() {
+    fetch("/login-status").then(response => response.json()).then((loginInfo) => {
+        console.log(loginInfo);
+        // Display submit comment form only if the user is logged in. Otherwise, display login form.
+        if (loginInfo.status === "True") {
+            const submitForm = document.getElementById("submit-comment-form");
+            submitForm.style.display = 'block';
+            const logoutHREF = document.getElementById("logout-href");
+            logoutHREF.href = loginInfo.logoutUrl;
+        } else {
+            // 
+            const loginForm = document.getElementById("login-form");
+            loginForm.style.display = 'block';
+            const loginHREF = document.getElementById("login-href");
+            loginHREF.href = loginInfo.loginUrl;
+        }  
+    });
 }
