@@ -36,6 +36,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
@@ -78,6 +80,7 @@ public final class DataServlet extends HttpServlet {
                 queryComments = new Query("Comment").setFilter(searchFilter);
                 break;
         }
+        
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery resultsComments = datastore.prepare(queryComments);
         List<Comment> comments = iterateQuery(resultsComments);
@@ -103,8 +106,12 @@ public final class DataServlet extends HttpServlet {
         
         String comment = getParameter(request, "user-comment", null).orElse(null);
 
+        // Get current user's email.
+        UserService userService = UserServiceFactory.getUserService();
+        String email = userService.getCurrentUser().getEmail();
+
         // Add comment to the datastore.
-        createComment(comment, name);
+        createComment(comment, name, email);
         // Increase total of AllComments by 1.
         changeAllCommentsTotal(1);
 
@@ -129,7 +136,7 @@ public final class DataServlet extends HttpServlet {
 
         // Iterates over the results until the results are less than the limit on comments or until the end of all results.
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
-            while (iter.hasNext()) {
+            if (iter.hasNext()) {
                 Entity entity = iter.next();
 
                 // Only add comment when it is part of the page the user is currently in.
@@ -140,8 +147,9 @@ public final class DataServlet extends HttpServlet {
                     long thumbsup = (long) entity.getProperty("thumbsup");
                     long thumbsdown = (long) entity.getProperty("thumbsdown");
                     String name = (String) entity.getProperty("name");
+                    String email = (String) entity.getProperty("email");
 
-                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name);
+                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name, email);
                     comments.add(comment);
                 }
             }
@@ -151,7 +159,7 @@ public final class DataServlet extends HttpServlet {
     }
 
     // Creates a Comment entity and stores it in the datastore.
-    private void createComment(String comment, String name) {
+    private void createComment(String comment, String name, String email) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("content", comment);
@@ -161,6 +169,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("thumbsdown", 0);
         commentEntity.setProperty("popularity", 0);
         commentEntity.setProperty("name", name);
+        commentEntity.setProperty("email", email);
         datastore.put(commentEntity);
     }
 
