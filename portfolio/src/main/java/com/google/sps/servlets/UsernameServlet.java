@@ -25,42 +25,46 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/login-status")
-public class LoginStatusServlet extends HttpServlet {
+@WebServlet("/username")
+public class UsernameServlet extends HttpServlet {
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        response.setContentType("application/json;");
-
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
-
-        if (userService.isUserLoggedIn()) {
-            String logoutUrl = userService.createLogoutURL("/contact.html");
-            String username = getUsername(userService.getCurrentUser().getUserId());
-            if (username == null) {
-                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");
-            } else {
-                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
-            }
-        } else {
-            String loginUrl = userService.createLoginURL("/contact.html");
-            response.getWriter().println("{\"status\": \"False\", \"loginUrl\": \"" + loginUrl + "\"}");
+        if (!userService.isUserLoggedIn()) {
+            response.sendRedirect("/contact.html");
+            return;
         }
+
+        String username = request.getParameter("user-username");
+        // Ask for username again if the username chosen was not available.
+        if (!usernameAvailable(username)) {
+            response.sendRedirect("/contact.html");
+            return;
+        }
+        String id = userService.getCurrentUser().getUserId();
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity entity = new Entity("UserInfo", id);
+        entity.setProperty("id", id);
+        entity.setProperty("username", username);
+        datastore.put(entity);
+
+        response.sendRedirect("/contact.html");
     }
 
-    // Returns the username that corresponds to the id that was given or null if there is no username linked to that id.
-    private String getUsername(String id) {
+    // Returns the true if the username is available to be used, otherwise returns false.
+    private boolean usernameAvailable(String username) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Filter queryFilter = new FilterPredicate("username", Query.FilterOperator.EQUAL, username);
         Query query = new Query("UserInfo").setFilter(queryFilter);
         PreparedQuery results = datastore.prepare(query); 
         Entity entity = results.asSingleEntity(); 
 
         if (entity == null) {
-            return null;
-        }
-
-        String username = (String) entity.getProperty("username");
-        return username;     
+            return true;
+        } else {
+            return false;
+        }    
     }
 }

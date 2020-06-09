@@ -12,33 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random Arctic Monkeys song to the page.
- */
-function addRandomAMSong() {
-  const songs =
-      [['Mardy Bum', 'https://www.youtube.com/embed/dO368WjwyFs?autoplay=1'], ['A Certain Romance', 'https://www.youtube.com/embed/zMupng6KQeE?autoplay=1'],
-      ['I Wanna Be Yours', 'https://www.youtube.com/embed/fJLQCf4mFP0?autoplay=1'], ['No 1 Party Anthem ', 'https://www.youtube.com/embed/pDYlWAf-ekk?autoplay=1'],
-      ['Snap Out of It', 'https://www.youtube.com/embed/1_O_T6Aq85E?autoplay=1'], ['Arabella', 'https://www.youtube.com/embed/Nj8r3qmOoZ8?autoplay=1'],
-      ['Teddy Picker', 'https://www.youtube.com/embed/2A2XBoxtcUA?autoplay=1'], ['505', 'https://www.youtube.com/embed/qU9mHegkTc4?autoplay=1'],
-      ['I Bet You Look Good On The Dancefloor', 'https://www.youtube.com/embed/pK7egZaT3hs?autoplay=1'],
-      ['R U Mine?', 'https://www.youtube.com/embed/VQH8ZTgna3Q?autoplay=1'], ['Old Yellow Bricks', 'https://www.youtube.com/embed/xLaeOrDmWQ4?autoplay=1'],
-      ['Fluorescent Adolescent', 'https://www.youtube.com/embed/ma9I9VBKPiw?autoplay=1'], ['Riot Van', 'https://www.youtube.com/embed/2XSOI72rZlw?autoplay=1'],
-      ['Do I Wanna Know', 'https://www.youtube.com/embed/bpOSxM0rNPM?autoplay=1'], ['When The Sun Goes Down', 'https://www.youtube.com/embed/EqkBRVukQmE?autoplay=1']];
-
-  // Pick a random AM song.
-  const song = songs[Math.floor(Math.random() * songs.length)];
-
-  // Add it to the page.
-  const songContainer = document.getElementById('song-container');
-  songContainer.innerText = song[0];
-
-  // Add video to the page.
-  const songVideo = document.getElementById('song-video');
-  songVideo.style.display = 'inline-block';
-  songVideo.src = song[1];
-}
-
 function getComments() {
     fetch('/data').then(response => response.json()).then((comments) => {
         comments.forEach((comment) => {
@@ -61,13 +34,25 @@ function createCommentBox(comment) {
 
     const nameElement = document.createElement('h3');
     nameElement.style.textAlign = 'left';
+    nameElement.style.display = 'inline';
     nameElement.innerHTML = comment.name;
+
+    const usernameElement = document.createElement('h3');
+    usernameElement.style.textAlign = 'left';
+    usernameElement.style.display = 'inline';
+    usernameElement.style.padding = '30px';
+    usernameElement.innerHTML = "(@" + comment.username + ")";
 
     const topLineElement = document.createElement('div');
     topLineElement.className = 'd-flex w-100 justify-content-between';
     topLineElement.style.textAlign = 'right';
     topLineElement.appendChild(timeElement);
-    topLineElement.appendChild(nameElement);
+
+    const nameLineElement = document.createElement('div');
+    nameLineElement.className = 'd-flex w-100 justify-content-between';
+    nameLineElement.style.textAlign = 'left';
+    nameLineElement.appendChild(nameElement);
+    nameLineElement.appendChild(usernameElement);
 
     const upIconElement = document.createElement('span');
     upIconElement.className = 'glyphicon glyphicon-thumbs-up';
@@ -123,6 +108,7 @@ function createCommentBox(comment) {
     buttonLineElement.appendChild(deleteButtonElement);
 
     commmentElement.appendChild(topLineElement);
+    commmentElement.appendChild(nameLineElement);
     commmentElement.appendChild(contentElement);
     commmentElement.appendChild(reactionsLineElement);
     commmentElement.appendChild(buttonLineElement);
@@ -186,6 +172,10 @@ function getSubmitForm() {
     fetch("/login-status").then(response => response.json()).then((loginInfo) => {
         // Display submit comment form only if the user is logged in. Otherwise, display login form.
         if (loginInfo.status === "True") {
+            if (loginInfo.username === "null") {
+                window.location.replace("/username.html");
+                return;
+            }
             const submitForm = document.getElementById("submit-comment-form");
             submitForm.style.display = 'block';
             const logoutHREF = document.getElementById("logout-href");

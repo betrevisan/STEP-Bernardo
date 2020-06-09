@@ -76,7 +76,13 @@ public final class DataServlet extends HttpServlet {
                 queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
                 break;
             default:
-                Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
+                String searchBy = (String) allCommentsEntity.getProperty("searchBy");
+                Filter searchFilter = null;
+                if (searchBy.equals("username")) {
+                    searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, selectedFilter);
+                } else {
+                    searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
+                }
                 queryComments = new Query("Comment").setFilter(searchFilter);
                 break;
         }
@@ -109,9 +115,10 @@ public final class DataServlet extends HttpServlet {
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
+        String username = getUsername(userService.getCurrentUser().getUserId());
 
         // Add comment to the datastore.
-        createComment(comment, name, email);
+        createComment(comment, name, email, username);
         // Increase total of AllComments by 1.
         changeAllCommentsTotal(1);
 
@@ -148,8 +155,9 @@ public final class DataServlet extends HttpServlet {
                     long thumbsdown = (long) entity.getProperty("thumbsdown");
                     String name = (String) entity.getProperty("name");
                     String email = (String) entity.getProperty("email");
+                    String username = (String) entity.getProperty("username");
 
-                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name, email);
+                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name, email, username);
                     comments.add(comment);
                 }
             }
@@ -159,7 +167,7 @@ public final class DataServlet extends HttpServlet {
     }
 
     // Creates a Comment entity and stores it in the datastore.
-    private void createComment(String comment, String name, String email) {
+    private void createComment(String comment, String name, String email, String username) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity commentEntity = new Entity("Comment");
         commentEntity.setProperty("content", comment);
@@ -170,6 +178,7 @@ public final class DataServlet extends HttpServlet {
         commentEntity.setProperty("popularity", 0);
         commentEntity.setProperty("name", name);
         commentEntity.setProperty("email", email);
+        commentEntity.setProperty("username", username);
         datastore.put(commentEntity);
     }
 
@@ -211,5 +220,21 @@ public final class DataServlet extends HttpServlet {
         Entity allCommentsEntity = iterAllComments.next(); 
 
         return allCommentsEntity;
+    }
+
+    // Returns the username that corresponds to the id that was given or null if there is no username linked to that id.
+    private String getUsername(String id) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity entity = results.asSingleEntity(); 
+
+        if (entity == null) {
+            return null;
+        }
+
+        String username = (String) entity.getProperty("username");
+        return username;     
     }
 }

@@ -375,11 +375,15 @@ function initMap() {
         bostonInfo.open(map, bostonMarker);
         windowManager(bostonInfo);
     });
-
+    
+    // Closes the previously opened window. If it is the first window to be opened just set it as the new open window.
     function windowManager(newWindow) {
+        console.log("Open:"+ openWindow);
+        console.log("New:"+ newWindow);
         if (openWindow != null) {
-            openWindow.close();
+            openWindowTemp = openWindow;
             openWindow = newWindow;
+            openWindowTemp.close();
         }
         else {
             openWindow = newWindow;
