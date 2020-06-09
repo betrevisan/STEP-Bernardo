@@ -40,10 +40,15 @@ public final class FiltersServlet extends HttpServlet {
         // Get the filter input from the form.
         String filter = getParameter(request, "filter-comments", null);
 
+        // Get the search by input from the form.
+        String searchBy = getParameter(request, "search-by", null);
+
         Entity allCommentsEntity = getAllCommentsEntity();
 
         // Update the filter property
         allCommentsEntity.setProperty("filter", filter);
+        // Update the search by property
+        allCommentsEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
         datastore.put(allCommentsEntity);
