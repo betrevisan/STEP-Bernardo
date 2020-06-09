@@ -58,7 +58,7 @@ public final class DataServlet extends HttpServlet {
         // Get the information of the currently logged in user.
         Entity userInfoEntity = getUserInfoEntity();
         String selectedFilter = (String) userInfoEntity.getProperty("filter");
-        
+
         Query queryComments = null;
         // Assign the correct query to queryComments according to the filter settings in place. 
         switch (selectedFilter) {
@@ -106,9 +106,13 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String name = getParameter(request, "user-name", null);
-        // If the name field was left blank, change it to Anonymous.
-        if (name.equals("")) {
+        // Get the information of the currently logged in user.
+        Entity userInfoEntity = getUserInfoEntity();
+        String name = (String) userInfoEntity.getProperty("name");
+
+        // If the user opted to post the comment anonymously, make the name Anonymous.
+        String anonymous = getParameter(request, "anonymous", "off");
+        if (anonymous.equals("on")) {
             name = "Anonymous";
         }
         
@@ -117,7 +121,7 @@ public final class DataServlet extends HttpServlet {
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
-        String username = getUsername(userService.getCurrentUser().getUserId());
+        String username = (String) userInfoEntity.getProperty("username");
 
         // Add comment to the datastore.
         createComment(comment, name, email, username);

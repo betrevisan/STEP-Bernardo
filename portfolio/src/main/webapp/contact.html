@@ -53,18 +53,15 @@
 
         <form action="/data" method="POST">
             <div class="form-group row">
-                <label for="user-name" class="col-sm-2 col-form-label">Name:</label>
-                <div class="col-sm-10" style="text-align:left;">
-                    <input type="text" class="form-control" name="user-name" id="user-name" style="color: #555555;" aria-describedby="name-description" placeholder="Enter name">
-                    <small id="name-description" class="form-text text-muted" style="color: #ffffff; text-align: left;">This field is optional. If you choose to omit it, your comment will be posted as "Anonymous".</small>
-                </div>
-            </div>
-            
-            <div class="form-group row">
                 <label for="user-comment" class="col-sm-2 col-form-label">Comment:</label>
                 <div class="col-sm-10">
                     <textarea class="form-control" name="user-comment" id="user-comment" rows="3" style="color: #555555;" required></textarea>
                 </div>
+            </div>
+
+            <div class="form-check ">
+                <label class="form-check-label" for="anonymous">Post anonymously?</label>
+                <input type="checkbox" class="form-check-input" name="anonymous" id="anonymous">
             </div>
 
             <input class="btn btn-default btn-lg" type="submit" />
