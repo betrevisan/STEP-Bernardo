@@ -37,6 +37,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.cloud.translate.Translate;
+import com.google.cloud.translate.TranslateOptions;
+import com.google.cloud.translate.Translation;
 
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
@@ -141,8 +144,16 @@ public final class DataServlet extends HttpServlet {
         long totalComments = (long) allCommentsEntity.getProperty("total");
         long page = (long) allCommentsEntity.getProperty("page");
         long maxComments = (long) allCommentsEntity.getProperty("max");
+
+        String language = (String) allCommentsEntity.getProperty("language");
+        if (language == null) {
+            language = "en";
+        }
+
         List<Comment> comments = new ArrayList<>();
         Iterator<Entity> iter = results.asIterator();
+
+        Translate translate = TranslateOptions.getDefaultInstance().getService();
 
         // Iterates over the results until the results are less than the limit on comments or until the end of all results.
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
@@ -160,7 +171,16 @@ public final class DataServlet extends HttpServlet {
                     String email = (String) entity.getProperty("email");
                     String username = (String) entity.getProperty("username");
 
-                    Comment comment = new Comment(id, content, time, thumbsup, thumbsdown, name, email, username);
+                    String translatedComment = null;
+                    try {
+                        // Translate comment
+                        Translation translation = translate.translate(content, Translate.TranslateOption.targetLanguage(language));
+                        translatedComment = translation.getTranslatedText();
+                    } catch (Exception e) {
+                        translatedComment = content;
+                    }
+
+                    Comment comment = new Comment(id, translatedComment, time, thumbsup, thumbsdown, name, email, username);
                     comments.add(comment);
                 }
             }
