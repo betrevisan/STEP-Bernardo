@@ -48,6 +48,10 @@ public class UsernameServlet extends HttpServlet {
         Entity entity = new Entity("UserInfo", id);
         entity.setProperty("id", id);
         entity.setProperty("username", username);
+        // Set recent as the default filter when a user is created
+        entity.setProperty("filter", "recent");
+        // Set name as the default search by method when a user is created
+        entity.setProperty("searchBy", "name");
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");

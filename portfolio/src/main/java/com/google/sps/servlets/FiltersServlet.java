@@ -31,6 +31,11 @@ import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 @WebServlet("/filters")
 public final class FiltersServlet extends HttpServlet {
@@ -45,13 +50,18 @@ public final class FiltersServlet extends HttpServlet {
 
         Entity allCommentsEntity = getAllCommentsEntity();
 
+        Entity userInfoEntity = getUserInfoEntity();
+
         // Update the filter property
         allCommentsEntity.setProperty("filter", filter);
+        userInfoEntity.setProperty("filter", filter);
         // Update the search by property
         allCommentsEntity.setProperty("searchBy", searchBy);
+        userInfoEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
         datastore.put(allCommentsEntity);
+        datastore.put(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
@@ -84,5 +94,18 @@ public final class FiltersServlet extends HttpServlet {
         Entity allCommentsEntity = iterAllComments.next(); 
 
         return allCommentsEntity;
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
     }
 }

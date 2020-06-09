@@ -55,10 +55,11 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity allCommentsEntity = getAllCommentsEntity();
-
+        // Get the information of the currently logged in user.
+        Entity userInfoEntity = getUserInfoEntity();
+        String selectedFilter = (String) userInfoEntity.getProperty("filter");
+        
         Query queryComments = null;
-        String selectedFilter = (String) allCommentsEntity.getProperty("filter");
         // Assign the correct query to queryComments according to the filter settings in place. 
         switch (selectedFilter) {
             case "recent":
@@ -77,7 +78,7 @@ public final class DataServlet extends HttpServlet {
                 queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
                 break;
             default:
-                String searchBy = (String) allCommentsEntity.getProperty("searchBy");
+                String searchBy = (String) userInfoEntity.getProperty("searchBy");
                 Filter searchFilter = null;
                 if (searchBy.equals("username")) {
                     searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, selectedFilter);
@@ -259,5 +260,18 @@ public final class DataServlet extends HttpServlet {
 
         String username = (String) entity.getProperty("username");
         return username;     
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
     }
 }
