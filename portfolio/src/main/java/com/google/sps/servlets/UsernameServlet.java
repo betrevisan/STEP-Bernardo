@@ -38,7 +38,7 @@ public class UsernameServlet extends HttpServlet {
 
         String username = request.getParameter("user-username");
         // Ask for username again if the username chosen was not available.
-        if (usernameCheck(username).equals(false)) {
+        if (!usernameCheck(username)) {
             response.sendRedirect("/contact.html");
             return;
         }
