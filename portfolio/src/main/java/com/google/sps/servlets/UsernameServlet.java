@@ -54,7 +54,7 @@ public class UsernameServlet extends HttpServlet {
     }
 
     // Returns the true if the username is available to be used, otherwise returns false.
-    private Boolean usernameCheck(String username) {
+    private boolean usernameAvailable(String username) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Filter queryFilter = new FilterPredicate("username", Query.FilterOperator.EQUAL, username);
         Query query = new Query("UserInfo").setFilter(queryFilter);
