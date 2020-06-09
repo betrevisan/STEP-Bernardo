@@ -74,7 +74,13 @@ public final class DataServlet extends HttpServlet {
                 queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
                 break;
             default:
-                Filter searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
+                String searchBy = (String) allCommentsEntity.getProperty("searchBy");
+                Filter searchFilter = null;
+                if (searchBy.equals("username")) {
+                    searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, selectedFilter);
+                } else {
+                    searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
+                }
                 queryComments = new Query("Comment").setFilter(searchFilter);
                 break;
         }
