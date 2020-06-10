@@ -46,16 +46,15 @@ public final class PaginationServlet extends HttpServlet {
 
         Entity userInfoEntity = getUserInfoEntity();
 
-        // Initialize AllComments object to be passed as a json.
+        // Prepare information to be passed as a json
         List<AllComments> allComments = new ArrayList<>();
         long total = (long) allCommentsEntity.getProperty("total");
         long max = (long) userInfoEntity.getProperty("max");
         long page = (long) userInfoEntity.getProperty("page");
         String filter = (String) userInfoEntity.getProperty("filter");
-        allComments.add(new AllComments(total, max, page, filter));
         
         // Convert to json.
-        String json = convertToJsonUsingGson(allComments);
+        String json = "{\"total\": " + total + ", \"max\": " + max + ", \"page\": " + page + ", \"filter\": \"" + filter + "\"}";
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }

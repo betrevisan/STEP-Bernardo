@@ -218,11 +218,6 @@ public final class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity allComments = new Entity("AllComments");
         allComments.setProperty("total", 0);
-        // Comments are by default limited to 10 per page.
-        allComments.setProperty("max", 10);
-        allComments.setProperty("page", 1);
-        // Comments are by default filtered by most recent first.
-        allComments.setProperty("filter", "recent");
         datastore.put(allComments);
     }
 

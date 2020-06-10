@@ -48,19 +48,14 @@ public final class FiltersServlet extends HttpServlet {
         // Get the search by input from the form.
         String searchBy = getParameter(request, "search-by", null);
 
-        Entity allCommentsEntity = getAllCommentsEntity();
-
         Entity userInfoEntity = getUserInfoEntity();
 
         // Update the filter property
-        allCommentsEntity.setProperty("filter", filter);
         userInfoEntity.setProperty("filter", filter);
         // Update the search by property
-        allCommentsEntity.setProperty("searchBy", searchBy);
         userInfoEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
-        datastore.put(allCommentsEntity);
         datastore.put(userInfoEntity);
 
         response.sendRedirect("/contact.html");
@@ -77,23 +72,6 @@ public final class FiltersServlet extends HttpServlet {
         }
 
         return value;
-    }
-
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
-    private Entity getAllCommentsEntity() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-
-        // Return null if there are no AllComments entity.
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

@@ -18,14 +18,8 @@ package com.google.sps.data;
 public final class AllComments {
 
   private long total;
-  private long max;
-  private long page;
-  private String filter;
 
-  public AllComments(long total, long max, long page, String filter) {
+  public AllComments(long total) {
     this.total = total;
-    this.max = max;
-    this.page = page;
-    this.filter = filter;
   }
 }

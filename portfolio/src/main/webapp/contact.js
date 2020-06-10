@@ -135,12 +135,10 @@ function downComment(comment) {
 
 function getPagination() {
     fetch('/pagination').then(response => response.json()).then((info) => {
-        info.forEach((entity) => {
-            const buttons = Math.ceil(entity.total / entity.max);
-            for (var i = 0; i < buttons; i++) {
-                document.getElementById('pagination-list').appendChild(createPaginationBox(i));
-            }
-        })
+        const buttons = Math.ceil(info.total / info.max);
+        for (var i = 0; i < buttons; i++) {
+            document.getElementById('pagination-list').appendChild(createPaginationBox(i));
+        }
     });
 }
 
