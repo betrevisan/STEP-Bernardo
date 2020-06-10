@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body onload="getLoginLogout()">
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -25,6 +25,8 @@
                 <li><a href="contact.html">CONTACT</a></li>
                 <li><a href="background.html">BACKGROUND</a></li>
                 <li><a href="interests.html">INTERESTS</a></li>
+                <!-- Will appear as log out if the user is currently logged in or as log in if the user is not yet logged in -->
+                <li><a id="login-logout"></a></li>
             </ul>
             </div>
         </div>
@@ -233,5 +235,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="interests.js"></script>
+    <script src="general.js"></script>
   </body>
 </html>
