@@ -35,7 +35,7 @@ public class LoginStatusServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
 
         if (userService.isUserLoggedIn()) {
-            String logoutUrl = userService.createLogoutURL("/contact.html");
+            String logoutUrl = userService.createLogoutURL("/index.html");
             String username = getUsername(userService.getCurrentUser().getUserId());
             if (username == null) {
                 response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");

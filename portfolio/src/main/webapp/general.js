@@ -27,3 +27,10 @@ function getLoginLogout() {
         }  
     });
 }
+
+function changeLocation(newLocation) {
+    console.log("New location is: " + newLocation);
+    const params = new URLSearchParams();
+    params.append('location', newLocation);
+    fetch('/where', {method: 'POST', body: params});
+}
