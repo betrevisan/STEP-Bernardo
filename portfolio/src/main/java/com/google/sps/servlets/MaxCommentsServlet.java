@@ -31,6 +31,11 @@ import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 @WebServlet("/max-comments")
 public final class MaxCommentsServlet extends HttpServlet {
@@ -55,7 +60,7 @@ public final class MaxCommentsServlet extends HttpServlet {
             // Only update maxComments if tempMax was not negative.
             if (tempMax > 0)
             {
-                changeAllCommentsMax(tempMax);
+                changeUserInfoMax(tempMax);
             }
 
             response.sendRedirect("/contact.html");
@@ -78,29 +83,25 @@ public final class MaxCommentsServlet extends HttpServlet {
         return value;
     }
 
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist
-    private Entity getAllCommentsEntity() {
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
 
-        // Return null if there are no AllComments entity
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
+        return userInfoEntity;
     }
 
     // Changes the value of the maximum number of comment per page property in AllComments and updates the datastore
-    private void changeAllCommentsMax(long newMax) {
-        Entity allCommentsEntity = getAllCommentsEntity();
+    private void changeUserInfoMax(long newMax) {
+        Entity userInfoEntity = getUserInfoEntity();
 
-        allCommentsEntity.setProperty("max", newMax);
+        userInfoEntity.setProperty("max", newMax);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(allCommentsEntity);
+        datastore.put(userInfoEntity);
     }
 }
