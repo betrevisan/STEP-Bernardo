@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -43,7 +44,7 @@ public final class FiltersServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the filter input from the form.
-        String filter = getParameter(request, "filter-comments", null);
+        String filter = getParameter(request, "filter-comments", null).orElse(null);
 
         // Get the search by input from the form.
         String searchBy = getParameter(request, "search-by", null);
@@ -63,15 +64,9 @@ public final class FiltersServlet extends HttpServlet {
     }
 
     // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-        // Get the input from the form.
+    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
-
-        if (value == null) {
-            return defaultValue;
-        }
-
-        return value;
+        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -43,7 +44,7 @@ public final class MaxCommentsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the max-comments input from the form.
-        String max = getParameter(request, "max-comments", null);
+        String max = getParameter(request, "max-comments", null).orElse(null);
 
         // If a maximum number of comments has been selected, only update the maxComments variable and return.
         if (max != null) {
@@ -72,15 +73,9 @@ public final class MaxCommentsServlet extends HttpServlet {
     }
 
     // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
-        // Get the input from the form.
+    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
-
-        if (value == null) {
-            return defaultValue;
-        }
-
-        return value;
+        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

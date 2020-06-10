@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -116,7 +117,7 @@ public final class DataServlet extends HttpServlet {
             name = "Anonymous";
         }
         
-        String comment = getParameter(request, "user-comment", null);
+        String comment = getParameter(request, "user-comment", null).orElse(null);
 
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
@@ -134,14 +135,9 @@ public final class DataServlet extends HttpServlet {
     }
 
     // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private String getParameter(HttpServletRequest request, String name, String defaultValue) {
+    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
         String value = request.getParameter(name);
-
-        if (value == null) {
-            return defaultValue;
-        }
-
-        return value;
+        return Optional.ofNullable(value);
     }
 
     // Iterates over a comments query and returns an array of comments.
