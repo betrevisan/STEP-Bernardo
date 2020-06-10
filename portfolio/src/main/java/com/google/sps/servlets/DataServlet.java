@@ -146,9 +146,11 @@ public final class DataServlet extends HttpServlet {
     // Iterates over a comments query and returns an array of comments.
     private List<Comment> iterateQuery(PreparedQuery results) {
         Entity allCommentsEntity = getAllCommentsEntity();
+        Entity userInfoEntity = getUserInfoEntity();
+
         long totalComments = (long) allCommentsEntity.getProperty("total");
-        long page = (long) allCommentsEntity.getProperty("page");
-        long maxComments = (long) allCommentsEntity.getProperty("max");
+        long page = (long) userInfoEntity.getProperty("page");
+        long maxComments = (long) userInfoEntity.getProperty("max");
 
         String language = (String) allCommentsEntity.getProperty("language");
         if (language == null) {

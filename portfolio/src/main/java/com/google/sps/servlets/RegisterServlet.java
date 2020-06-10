@@ -56,6 +56,10 @@ public class RegisterServlet extends HttpServlet {
         entity.setProperty("filter", "recent");
         // Set name as the default search by method when a user is created
         entity.setProperty("searchBy", "name");
+        // Set 1 as the default page number after registering
+        entity.setProperty("page", 1);
+        // Set 10 as the default maximum number of comments after registering
+        entity.setProperty("max", 10);
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");
