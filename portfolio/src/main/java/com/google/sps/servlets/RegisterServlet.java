@@ -60,6 +60,8 @@ public class RegisterServlet extends HttpServlet {
         entity.setProperty("page", 1);
         // Set 10 as the default maximum number of comments after registering
         entity.setProperty("max", 10);
+        // Set English as the default language
+        entity.setProperty("language", "en");
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");

@@ -121,6 +121,7 @@ public final class DataServlet extends HttpServlet {
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
+
         String username = (String) userInfoEntity.getProperty("username");
 
         // Add comment to the datastore.
@@ -152,7 +153,7 @@ public final class DataServlet extends HttpServlet {
         long page = (long) userInfoEntity.getProperty("page");
         long maxComments = (long) userInfoEntity.getProperty("max");
 
-        String language = (String) allCommentsEntity.getProperty("language");
+        String language = (String) userInfoEntity.getProperty("language");
         if (language == null) {
             language = "en";
         }
