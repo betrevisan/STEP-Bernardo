@@ -31,6 +31,11 @@ import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 @WebServlet("/pagination")
 public final class PaginationServlet extends HttpServlet {
@@ -39,29 +44,30 @@ public final class PaginationServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Entity allCommentsEntity = getAllCommentsEntity();
 
-        // Initialize AllComments object to be passed as a json.
+        Entity userInfoEntity = getUserInfoEntity();
+
+        // Prepare information to be passed as a json
         List<AllComments> allComments = new ArrayList<>();
         long total = (long) allCommentsEntity.getProperty("total");
-        long max = (long) allCommentsEntity.getProperty("max");
-        long page = (long) allCommentsEntity.getProperty("page");
-        String filter = (String) allCommentsEntity.getProperty("filter");
-        allComments.add(new AllComments(total, max, page, filter));
+        long max = (long) userInfoEntity.getProperty("max");
+        long page = (long) userInfoEntity.getProperty("page");
+        String filter = (String) userInfoEntity.getProperty("filter");
         
         // Convert to json.
-        String json = convertToJsonUsingGson(allComments);
+        String json = "{\"total\": " + total + ", \"max\": " + max + ", \"page\": " + page + ", \"filter\": \"" + filter + "\"}";
         response.setContentType("application/json;");
         response.getWriter().println(json);
     }
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity allCommentsEntity = getAllCommentsEntity();
+        Entity userInfoEntity = getUserInfoEntity();
 
-        // Update the page property of AllComments.
+        // Update the page property of UserInfo.
         long newPage = Long.parseLong(request.getParameter("i")) + 1;
-        allCommentsEntity.setProperty("page", newPage);
+        userInfoEntity.setProperty("page", newPage);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(allCommentsEntity);
+        datastore.put(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
@@ -89,5 +95,18 @@ public final class PaginationServlet extends HttpServlet {
         Entity allCommentsEntity = iterAllComments.next(); 
 
         return allCommentsEntity;
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
     }
 }

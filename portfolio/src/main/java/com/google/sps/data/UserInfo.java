@@ -14,12 +14,24 @@
 
 package com.google.sps.data;
 
-/** All comments on my portfolio */
-public final class AllComments {
+/** User Info for each registered user */
+public final class UserInfo {
 
-  private long total;
+  private long id;
+  private long max;
+  private long page;
+  private String name;
+  private String username;
+  private String filter;
+  private String searchBy;
 
-  public AllComments(long total) {
-    this.total = total;
+  public UserInfo(long id, long max, long page, String name, String username, String filter, String searchBy) {
+    this.id = id;
+    this.max = max;
+    this.page = page;
+    this.name = name;
+    this.username = username;
+    this.filter = filter;
+    this.searchBy = searchBy;
   }
 }

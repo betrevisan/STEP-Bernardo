@@ -25,8 +25,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/username")
-public class UsernameServlet extends HttpServlet {
+@WebServlet("/register")
+public class RegisterServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -42,12 +42,26 @@ public class UsernameServlet extends HttpServlet {
             response.sendRedirect("/contact.html");
             return;
         }
+
+        String name = request.getParameter("user-name");
+
         String id = userService.getCurrentUser().getUserId();
 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity entity = new Entity("UserInfo", id);
         entity.setProperty("id", id);
         entity.setProperty("username", username);
+        entity.setProperty("name", name);
+        // Set recent as the default filter when a user is created
+        entity.setProperty("filter", "recent");
+        // Set name as the default search by method when a user is created
+        entity.setProperty("searchBy", "name");
+        // Set 1 as the default page number after registering
+        entity.setProperty("page", 1);
+        // Set 10 as the default maximum number of comments after registering
+        entity.setProperty("max", 10);
+        // Set English as the default language
+        entity.setProperty("language", "en");
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");

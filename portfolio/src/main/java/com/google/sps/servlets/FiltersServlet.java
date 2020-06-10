@@ -32,6 +32,11 @@ import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 
 @WebServlet("/filters")
 public final class FiltersServlet extends HttpServlet {
@@ -44,15 +49,15 @@ public final class FiltersServlet extends HttpServlet {
         // Get the search by input from the form.
         String searchBy = getParameter(request, "search-by", null);
 
-        Entity allCommentsEntity = getAllCommentsEntity();
+        Entity userInfoEntity = getUserInfoEntity();
 
         // Update the filter property
-        allCommentsEntity.setProperty("filter", filter);
+        userInfoEntity.setProperty("filter", filter);
         // Update the search by property
-        allCommentsEntity.setProperty("searchBy", searchBy);
+        userInfoEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
-        datastore.put(allCommentsEntity);
+        datastore.put(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
@@ -64,20 +69,16 @@ public final class FiltersServlet extends HttpServlet {
         return Optional.ofNullable(value);
     }
 
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
-    private Entity getAllCommentsEntity() {
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
 
-        // Return null if there are no AllComments entity.
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
+        return userInfoEntity;
     }
 }

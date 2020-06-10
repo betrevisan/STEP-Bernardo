@@ -56,11 +56,11 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity allCommentsEntity = getAllCommentsEntity();
+        // Get the information of the currently logged in user.
+        Entity userInfoEntity = getUserInfoEntity();
+        String selectedFilter = (String) userInfoEntity.getProperty("filter");
 
         Query queryComments = null;
-        String selectedFilter = (String) allCommentsEntity.getProperty("filter");
-
         // Assign the correct query to queryComments according to the filter settings in place. 
         switch (selectedFilter) {
             case "recent":
@@ -79,7 +79,7 @@ public final class DataServlet extends HttpServlet {
                 queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
                 break;
             default:
-                String searchBy = (String) allCommentsEntity.getProperty("searchBy");
+                String searchBy = (String) userInfoEntity.getProperty("searchBy");
                 Filter searchFilter = null;
                 if (searchBy.equals("username")) {
                     searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, selectedFilter);
@@ -107,9 +107,13 @@ public final class DataServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String name = getParameter(request, "user-name", null).orElse(null);
-        // If the name field was left blank, change it to Anonymous.
-        if (name.equals("")) {
+        // Get the information of the currently logged in user.
+        Entity userInfoEntity = getUserInfoEntity();
+        String name = (String) userInfoEntity.getProperty("name");
+
+        // If the user opted to post the comment anonymously, make the name Anonymous.
+        String anonymous = getParameter(request, "anonymous", "off");
+        if (anonymous.equals("on")) {
             name = "Anonymous";
         }
         
@@ -118,7 +122,8 @@ public final class DataServlet extends HttpServlet {
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
-        String username = getUsername(userService.getCurrentUser().getUserId());
+
+        String username = (String) userInfoEntity.getProperty("username");
 
         // Add comment to the datastore.
         createComment(comment, name, email, username);
@@ -138,11 +143,13 @@ public final class DataServlet extends HttpServlet {
     // Iterates over a comments query and returns an array of comments.
     private List<Comment> iterateQuery(PreparedQuery results) {
         Entity allCommentsEntity = getAllCommentsEntity();
-        long totalComments = (long) allCommentsEntity.getProperty("total");
-        long page = (long) allCommentsEntity.getProperty("page");
-        long maxComments = (long) allCommentsEntity.getProperty("max");
+        Entity userInfoEntity = getUserInfoEntity();
 
-        String language = (String) allCommentsEntity.getProperty("language");
+        long totalComments = (long) allCommentsEntity.getProperty("total");
+        long page = (long) userInfoEntity.getProperty("page");
+        long maxComments = (long) userInfoEntity.getProperty("max");
+
+        String language = (String) userInfoEntity.getProperty("language");
         if (language == null) {
             language = "en";
         }
@@ -207,11 +214,6 @@ public final class DataServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity allComments = new Entity("AllComments");
         allComments.setProperty("total", 0);
-        // Comments are by default limited to 10 per page.
-        allComments.setProperty("max", 10);
-        allComments.setProperty("page", 1);
-        // Comments are by default filtered by most recent first.
-        allComments.setProperty("filter", "recent");
         datastore.put(allComments);
     }
 
@@ -256,5 +258,18 @@ public final class DataServlet extends HttpServlet {
 
         String username = (String) entity.getProperty("username");
         return username;     
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
     }
 }
