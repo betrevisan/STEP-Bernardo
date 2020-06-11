@@ -12,6 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+function getLoginLogout() {
+    fetch("/login-status").then(response => response.json()).then((loginInfo) => {
+        // Display Log Out if the user is logged in. Otherwise, display Log In.
+        if (loginInfo.status === "True") {
+            const loginNav = document.getElementById("login-logout");
+            loginNav.innerHTML = "LOG OUT";
+            loginNav.href = loginInfo.logoutUrl;
+        } else {
+            const loginNav = document.getElementById("login-logout");
+            loginNav.innerHTML = "LOG IN";
+            loginNav.href = loginInfo.loginUrl;
+        }  
+    });
+}
+
 function changeWhere(newLocation) {
     const params = new URLSearchParams();
     params.append('newLocation', newLocation);
