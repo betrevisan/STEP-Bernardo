@@ -71,14 +71,26 @@ public final class LanguageServlet extends HttpServlet {
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
     private Entity getUserInfoEntity() {
-        UserService userService = UserServiceFactory.getUserService();
-        String id = userService.getCurrentUser().getUserId();
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
-        Query query = new Query("UserInfo").setFilter(queryFilter);
-        PreparedQuery results = datastore.prepare(query); 
-        Entity userInfoEntity = results.asSingleEntity(); 
+        try {
+            UserService userService = UserServiceFactory.getUserService();
+            String id = userService.getCurrentUser().getUserId();
+            DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+            Query query = new Query("UserInfo").setFilter(queryFilter);
+            PreparedQuery results = datastore.prepare(query); 
+            Entity userInfoEntity = results.asSingleEntity(); 
 
-        return userInfoEntity;
+            return userInfoEntity;
+
+        } catch (Exception e) {
+            // If the user is not logged in, return default user entity
+            Entity defaultEntity = new Entity("UserInfo");
+            defaultEntity.setProperty("max", 10);
+            defaultEntity.setProperty("page", 1);
+            defaultEntity.setProperty("language", "en");
+            defaultEntity.setProperty("filter", "recent");
+            defaultEntity.setProperty("searchBy", "name");
+            return defaultEntity;
+        }
     }
 }
