@@ -47,7 +47,7 @@ public final class FiltersServlet extends HttpServlet {
         String filter = getParameter(request, "filter-comments", null).orElse(null);
 
         // Get the search by input from the form.
-        String searchBy = getParameter(request, "search-by", null);
+        String searchBy = getParameter(request, "search-by", null).orElse(null);
 
         Entity userInfoEntity = getUserInfoEntity();
 
