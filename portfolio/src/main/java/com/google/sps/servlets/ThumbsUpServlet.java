@@ -31,54 +31,140 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 
 @WebServlet("/thumbsup-data")
 public final class ThumbsUpServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        UserService userService = UserServiceFactory.getUserService();
+        if (!userService.isUserLoggedIn()) {
+            response.sendRedirect("/contact.html");
+            return;
+        }
+
+        Entity userInfoEntity = getUserInfoEntity();
+
         // Get comment's id (which was passed as a parameter).
         long id = Long.parseLong(request.getParameter("id"));
+
+        Entity commentEntity = getCommentEntity(id);
+        if (commentEntity == null) {
+            response.setContentType("text/html;");
+            response.getWriter().println("Unable to get comment.");
+            return;
+        }
+        
+        if (!likedComment(userInfoEntity, commentEntity)) {
+            changePopularity(commentEntity, 1);
+            addToLikedComments(userInfoEntity, commentEntity);
+        } else {
+            changePopularity(commentEntity, -1);
+            removeFromLikedComments(userInfoEntity, commentEntity);
+        }
+
+
+        response.sendRedirect("/contact.html");
+        return;
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getCommentEntity(long id) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // Using the id, get the comment's key.
         Key commentEntityKey;
         try {
             commentEntityKey = KeyFactory.createKey("Comment", id);
         } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment's key.");
-            return;
+            return null;
         }
-
-        // Instantiate datastore.
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // Get the comment entity using its key.
         Entity commentEntity;
         try {
             commentEntity = datastore.get(commentEntityKey);
         } catch(Exception e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment.");
-            return;
+            return null;
         }
+
+        return commentEntity;
+    }
+
+    private void changePopularity(Entity commentEntity, long value) {
+        // Instantiate datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // Get the previous thumbs up value.
         long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
         // Get the previous popularity value.
         long prevPopularity = (long) commentEntity.getProperty("popularity");
-        long newThumbsUp = prevThumbsUp + 1;
-        long newPopularity = prevPopularity + 1;
+
+        long newThumbsUp = prevThumbsUp + value;
+        long newPopularity = prevPopularity + value;
         
-        // Update the thumbs up property to be the previous value plus one
+        // Update the thumbs up property to be the previous value plus one.
         commentEntity.setProperty("thumbsup", newThumbsUp);
         // Update the popularity property to be the previous one plus one.
         commentEntity.setProperty("popularity", newPopularity);
 
-        // Add the updated entity back in the datastore.
+        // Add the updated entity back in the datastore
         datastore.put(commentEntity);
+    }
 
-        response.sendRedirect("/contact.html");
-        return;
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
+    }
+
+    private void addToLikedComments(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+
+        if (liked == null) {
+            liked =  new ArrayList<Key>();
+        }
+
+        liked.add(commentEntity.getKey());
+        userInfoEntity.setProperty("liked", liked);
+        datastore.put(userInfoEntity);
+    }
+
+    private void removeFromLikedComments(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+
+        liked.remove(commentEntity.getKey());
+        userInfoEntity.setProperty("liked", liked);
+        datastore.put(userInfoEntity);
+    }
+
+    private boolean likedComment(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+        Key commentKey = commentEntity.getKey();
+
+        if (liked != null) {
+            if (liked.contains(commentKey)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }
