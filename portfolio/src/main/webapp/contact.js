@@ -13,6 +13,7 @@
 // limitations under the License.
 
 function getComments() {
+    // Display the comments
     fetch('/data').then(response => response.json()).then((comments) => {
         comments.forEach((comment) => {
             document.getElementById('comments-list').appendChild(createCommentBox(comment));
