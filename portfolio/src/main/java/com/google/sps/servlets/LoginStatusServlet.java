@@ -35,13 +35,24 @@ public class LoginStatusServlet extends HttpServlet {
         UserService userService = UserServiceFactory.getUserService();
 
         if (userService.isUserLoggedIn()) {
-            String logoutUrl = userService.createLogoutURL("/contact.html");
+            Entity userInfoEntity = getUserInfoEntity();
+
+            String where = (String) userInfoEntity.getProperty("where");
+            // If there is nothing in the where filed, set it to contact.html by default.
+            if (where == null) {
+                where = "/contact.html";
+            }
+
+            String logoutUrl = userService.createLogoutURL(where);
+
             String username = getUsername(userService.getCurrentUser().getUserId());
+
             if (username == null) {
                 response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");
             } else {
                 response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
             }
+
         } else {
             String loginUrl = userService.createLoginURL("/contact.html");
             response.getWriter().println("{\"status\": \"False\", \"loginUrl\": \"" + loginUrl + "\"}");
@@ -62,5 +73,18 @@ public class LoginStatusServlet extends HttpServlet {
 
         String username = (String) entity.getProperty("username");
         return username;     
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
+        PreparedQuery results = datastore.prepare(query); 
+        Entity userInfoEntity = results.asSingleEntity(); 
+
+        return userInfoEntity;
     }
 }
