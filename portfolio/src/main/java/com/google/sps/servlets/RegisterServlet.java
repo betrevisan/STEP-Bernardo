@@ -24,6 +24,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet("/register")
 public class RegisterServlet extends HttpServlet {
@@ -62,6 +64,14 @@ public class RegisterServlet extends HttpServlet {
         entity.setProperty("max", 10);
         // Set English as the default language
         entity.setProperty("language", "en");
+        // Set contact.html as the default location after registering
+        entity.setProperty("where", "/contact.html");
+        // Keeps track of the keys of comments that were unliked by the user.
+        List<Key> unliked = new ArrayList<Key>();
+        entity.setProperty("unliked", unliked);
+        // Keeps track of the keys of comments that were liked by the user.
+        List<Key> liked = new ArrayList<Key>();
+        entity.setProperty("liked", liked);
         datastore.put(entity);
 
         response.sendRedirect("/contact.html");
