@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body onload="getLoginLogout()">
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -18,13 +18,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">Bernardo's Portfolio</a>
+            <a class="navbar-brand" href="index.html" onclick="changeWhere('/index.html')">Bernardo's Portfolio</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="contact.html">CONTACT</a></li>
-                <li><a href="background.html">BACKGROUND</a></li>
-                <li><a href="interests.html">INTERESTS</a></li>
+                <li><a href="contact.html" onclick="changeWhere('/contact.html')">CONTACT</a></li>
+                <li><a href="background.html" onclick="changeWhere('/background.html')">BACKGROUND</a></li>
+                <li><a href="interests.html" onclick="changeWhere('/interests.html')">INTERESTS</a></li>
+                <li><a id="login-logout"></a></li>
             </ul>
             </div>
         </div>
@@ -56,7 +57,7 @@
                 <h3>Contact</h3>
                 <p>Want to get in touch with me? Click the button below to see my contact information.
                 </p>
-                <a href="contact.html">
+                <a href="contact.html" onclick="changeWhere('/contact.html')">
                     <button class="btn btn-default btn-lg" ></span>Contact</button>
                 </a>
             </div>
@@ -65,7 +66,7 @@
                 <p>I have created an interactive map for you to explore some of the places I have been to and that have somehow influenced
                     me to become who I am today. Check it out!
                 </p>
-                <a href="background.html">
+                <a href="background.html" onclick="changeWhere('/background.html')">
                     <button class="btn btn-default btn-lg" ></span>Background</button>
                 </a>
             </div>
@@ -74,7 +75,7 @@
                 <p>I have compiled three areas that I am very interested in and that, at the same time, can provide you with further insight
                     into who I am. Please reach out if you see anything that resonates with you! I love talking about these things.
                 </p>
-                <a href="interests.html">
+                <a href="interests.html" onclick="changeWhere('/interests.html')">
                     <button class="btn btn-default btn-lg" ></span>Interests</button>
                 </a>
             </div>
@@ -87,5 +88,6 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="general.js"></script>
   </body>
 </html>

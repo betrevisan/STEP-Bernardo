@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
   </head>
-  <body>
+  <body onload="getLoginLogout()">
     <nav class="navbar navbar-default">
         <div class="container">
             <div class="navbar-header">
@@ -18,13 +18,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="index.html">Bernardo's Portfolio</a>
+            <a class="navbar-brand" href="index.html" onclick="changeWhere('/index.html')">Bernardo's Portfolio</a>
             </div>
             <div class="collapse navbar-collapse" id="myNavbar">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="contact.html">CONTACT</a></li>
-                <li><a href="background.html">BACKGROUND</a></li>
-                <li><a href="interests.html">INTERESTS</a></li>
+                <li><a href="contact.html" onclick="changeWhere('/contact.html')">CONTACT</a></li>
+                <li><a href="background.html" onclick="changeWhere('/background.html')">BACKGROUND</a></li>
+                <li><a href="interests.html" onclick="changeWhere('/interests.html')">INTERESTS</a></li>
+                <li><a id="login-logout"></a></li>
             </ul>
             </div>
         </div>
@@ -233,5 +234,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="interests.js"></script>
+    <script src="general.js"></script>
   </body>
 </html>

@@ -14,59 +14,42 @@
 
 package com.google.sps.servlets;
 
+import com.google.appengine.api.datastore.*;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Optional;
-import com.google.gson.Gson;
-import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
-import com.google.sps.data.Comment;
-import com.google.sps.data.AllComments;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
-import com.google.appengine.api.datastore.Query.SortDirection;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
-import com.google.appengine.api.datastore.Query.FilterOperator;
-import com.google.appengine.api.datastore.Query.Filter;
-import com.google.appengine.api.datastore.Query.FilterPredicate;
 
-@WebServlet("/filters")
-public final class FiltersServlet extends HttpServlet {
+@WebServlet("/where")
+public class WhereServlet extends HttpServlet {
 
-    @Override
+     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Get the filter input from the form.
-        String filter = getParameter(request, "filter-comments", null).orElse(null);
+        UserService userService = UserServiceFactory.getUserService();
 
-        // Get the search by input from the form.
-        String searchBy = getParameter(request, "search-by", null).orElse(null);
+        // If the user is not logged in, then there is nothing to update.
+        if (!userService.isUserLoggedIn()) {
+            return;
+        }
+
+        String newLocation = request.getParameter("newLocation");
 
         Entity userInfoEntity = getUserInfoEntity();
 
-        // Update the filter property
-        userInfoEntity.setProperty("filter", filter);
-        // Update the search by property
-        userInfoEntity.setProperty("searchBy", searchBy);
+        // Update the where property
+        userInfoEntity.setProperty("where", newLocation);
+
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        
         // Add the updated entity back in the datastore
         datastore.put(userInfoEntity);
 
-        response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
