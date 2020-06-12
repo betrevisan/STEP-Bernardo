@@ -13,6 +13,12 @@
 // limitations under the License.
 
 function getComments() {
+    // Get the username of the user who is currently logged in. Null if the user is not logged in.
+    var username = null;
+    fetch("/login-status").then(response => response.json()).then((loginInfo) => {
+        username = loginInfo.username;
+    });
+
     fetch('/data').then(response => response.json()).then((comments) => {
         comments.forEach((comment) => {
             document.getElementById('comments-list').appendChild(createCommentBox(comment));
