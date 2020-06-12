@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -38,7 +39,7 @@ public final class ThumbsUpServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get comment's id (which was passed as a parameter).
-        long id = Long.parseLong(request.getParameter("id"));
+        long id = Long.parseLong(Optional.ofNullable(request.getParameter("id")).orElse(null));
 
         // Using the id, get the comment's key.
         Key commentEntityKey;
