@@ -113,7 +113,7 @@ public final class DataServlet extends HttpServlet {
         String name = (String) userInfoEntity.getProperty("name");
 
         // If the user opted to post the comment anonymously, make the name Anonymous.
-        String anonymous = getParameter(request, "anonymous", "off").orElse(null);
+        String anonymous = getParameter(request, "anonymous", "off").orElse("off");
         if (anonymous.equals("on")) {
             name = "Anonymous";
         }
