@@ -61,10 +61,10 @@ public final class ThumbsUpServlet extends HttpServlet {
         }
 
         if (!isLikedComment(userInfoEntity, commentEntity)) {
-            changePopularity(commentEntity, 1);
+            incrementPopularity(commentEntity);
             addToLikedComments(userInfoEntity, commentEntity);
         } else {
-            changePopularity(commentEntity, -1);
+            decrementPopularity(commentEntity);
             removeFromLikedComments(userInfoEntity, commentEntity);
         }
 
@@ -96,7 +96,7 @@ public final class ThumbsUpServlet extends HttpServlet {
         return commentEntity;
     }
 
-    private void changePopularity(Entity commentEntity, long value) {
+    private void decrementPopularity(Entity commentEntity) {
         // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -105,8 +105,29 @@ public final class ThumbsUpServlet extends HttpServlet {
         // Get the previous popularity value.
         long prevPopularity = (long) commentEntity.getProperty("popularity");
         
-        long newThumbsUp = prevThumbsUp + value;
-        long newPopularity = prevPopularity + value;
+        long newThumbsUp = prevThumbsUp - 1;
+        long newPopularity = prevPopularity - 1;
+        
+        // Update the thumbs up property to be the previous value plus one.
+        commentEntity.setProperty("thumbsup", newThumbsUp);
+        // Update the popularity property to be the previous one plus one.
+        commentEntity.setProperty("popularity", newPopularity);
+
+        // Add the updated entity back in the datastore.
+        datastore.put(commentEntity);
+    }
+
+    private void incrementPopularity(Entity commentEntity) {
+        // Instantiate datastore
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        // Get the previous thumbs up value.
+        long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
+        // Get the previous popularity value.
+        long prevPopularity = (long) commentEntity.getProperty("popularity");
+        
+        long newThumbsUp = prevThumbsUp + 1;
+        long newPopularity = prevPopularity + 1;
         
         // Update the thumbs up property to be the previous value plus one.
         commentEntity.setProperty("thumbsup", newThumbsUp);
