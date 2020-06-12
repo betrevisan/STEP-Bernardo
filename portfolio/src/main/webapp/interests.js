@@ -38,3 +38,8 @@ function addRandomAMSong() {
   songVideo.style.display = 'inline-block';
   songVideo.src = song[1];
 }
+
+function getSentiment() {
+    const sentiment = document.getElementById('analysis-results');
+    sentiment.style.display = 'inline-block';
+}
