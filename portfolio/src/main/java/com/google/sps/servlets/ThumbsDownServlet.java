@@ -145,7 +145,7 @@ public final class ThumbsDownServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
         Query query = new Query("UserInfo").setFilter(queryFilter);
-        
+
         return datastore.prepare(query).asSingleEntity();
     }
 
@@ -176,14 +176,6 @@ public final class ThumbsDownServlet extends HttpServlet {
         List<Key> unliked = (ArrayList<Key>) userInfoEntity.getProperty("unliked");
         Key commentKey = commentEntity.getKey();
 
-        if (unliked != null) {
-            if (unliked.contains(commentKey)) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return unliked != null && unliked.contains(commentKey);
     }
 }
