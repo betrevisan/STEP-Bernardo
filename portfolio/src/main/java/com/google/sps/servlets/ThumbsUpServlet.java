@@ -60,7 +60,7 @@ public final class ThumbsUpServlet extends HttpServlet {
             return;
         }
 
-        if (!likedComment(userInfoEntity, commentEntity)) {
+        if (!isLikedComment(userInfoEntity, commentEntity)) {
             changePopularity(commentEntity, 1);
             addToLikedComments(userInfoEntity, commentEntity);
         } else {
@@ -152,7 +152,7 @@ public final class ThumbsUpServlet extends HttpServlet {
         datastore.put(userInfoEntity);
     }
 
-    private boolean likedComment(Entity userInfoEntity, Entity commentEntity) {
+    private boolean isLikedComment(Entity userInfoEntity, Entity commentEntity) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
         Key commentKey = commentEntity.getKey();
