@@ -145,10 +145,8 @@ public final class ThumbsUpServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
         Query query = new Query("UserInfo").setFilter(queryFilter);
-        PreparedQuery results = datastore.prepare(query); 
-        Entity userInfoEntity = results.asSingleEntity(); 
-
-        return userInfoEntity;
+        
+        return datastore.prepare(query).asSingleEntity();
     }
 
     private void addToLikedComments(Entity userInfoEntity, Entity commentEntity) {
