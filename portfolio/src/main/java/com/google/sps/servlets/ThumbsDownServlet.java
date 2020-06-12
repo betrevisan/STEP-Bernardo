@@ -60,12 +60,12 @@ public final class ThumbsDownServlet extends HttpServlet {
             return;
         }
 
-        if (!isUnlikedComment(userInfoEntity, commentEntity)) {
-            decrementPopularity(commentEntity);
-            addToUnlikedComments(userInfoEntity, commentEntity);
-        } else {
+        if (isUnlikedComment(userInfoEntity, commentEntity)) {
             incrementPopularity(commentEntity);
             removeFromUnlikedComments(userInfoEntity, commentEntity);
+        } else {
+            decrementPopularity(commentEntity);
+            addToUnlikedComments(userInfoEntity, commentEntity);
         }
 
 

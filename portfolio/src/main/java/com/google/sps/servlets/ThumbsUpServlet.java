@@ -60,12 +60,12 @@ public final class ThumbsUpServlet extends HttpServlet {
             return;
         }
 
-        if (!isLikedComment(userInfoEntity, commentEntity)) {
-            incrementPopularity(commentEntity);
-            addToLikedComments(userInfoEntity, commentEntity);
-        } else {
+        if (isLikedComment(userInfoEntity, commentEntity)) {
             decrementPopularity(commentEntity);
             removeFromLikedComments(userInfoEntity, commentEntity);
+        } else {
+            incrementPopularity(commentEntity);
+            addToLikedComments(userInfoEntity, commentEntity);
         }
 
 
