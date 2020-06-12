@@ -27,7 +27,7 @@ function getComments() {
     });
 }
 
-function createCommentBox(comment) {
+function createCommentBox(comment, username) {
     const commmentElement = document.createElement('li');
     commmentElement.className = 'list-group-item';
 
