@@ -75,10 +75,6 @@ public class RegisterServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query); 
         Entity entity = results.asSingleEntity(); 
 
-        if (entity == null) {
-            return true;
-        } else {
-            return false;
-        }    
+        return entity == null; 
     }
 }
