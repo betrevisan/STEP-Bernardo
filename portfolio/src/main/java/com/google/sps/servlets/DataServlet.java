@@ -96,6 +96,7 @@ public final class DataServlet extends HttpServlet {
         List<Comment> comments = iterateQuery(resultsComments);
         String json = convertToJsonUsingGson(comments);
         response.setContentType("application/json;");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().println(json);
     }
 
