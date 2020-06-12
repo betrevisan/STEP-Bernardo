@@ -77,7 +77,7 @@ public final class LanguageServlet extends HttpServlet {
 
             return userInfoEntity;
 
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             // If the user is not logged in, return default user entity
             Entity defaultEntity = new Entity("UserInfo");
             defaultEntity.setProperty("max", 10);

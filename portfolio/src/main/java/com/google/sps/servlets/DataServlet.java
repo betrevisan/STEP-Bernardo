@@ -113,7 +113,7 @@ public final class DataServlet extends HttpServlet {
         String name = (String) userInfoEntity.getProperty("name");
 
         // If the user opted to post the comment anonymously, make the name Anonymous.
-        String anonymous = getParameter(request, "anonymous", "off").orElse(null);
+        String anonymous = getParameter(request, "anonymous", "off").orElse("off");
         if (anonymous.equals("on")) {
             name = "Anonymous";
         }
@@ -181,7 +181,7 @@ public final class DataServlet extends HttpServlet {
                         // Translate comment
                         Translation translation = translate.translate(content, Translate.TranslateOption.targetLanguage(language));
                         translatedComment = translation.getTranslatedText();
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         translatedComment = content;
                     }
 
@@ -274,7 +274,7 @@ public final class DataServlet extends HttpServlet {
 
             return userInfoEntity;
 
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             // If the user is not logged in, return default user entity
             Entity defaultEntity = new Entity("UserInfo");
             defaultEntity.setProperty("max", (long) 10);
