@@ -50,7 +50,7 @@ public class LoginStatusServlet extends HttpServlet {
             if (username == null) {
                 response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");
             } else {
-                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
+                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"" + username + "\"}");
             }
 
         } else {
