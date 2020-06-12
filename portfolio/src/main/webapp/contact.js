@@ -98,7 +98,7 @@ function createCommentBox(comment, username) {
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
-    reactionsLineElement.style.textAlign = 'right';
+    deleteButtonElement.style.textAlign = 'right';
     deleteButtonElement.className = 'btn btn-default btn-lg';
     deleteButtonElement.addEventListener('click', () => {
         deleteComment(comment);
@@ -109,7 +109,11 @@ function createCommentBox(comment, username) {
         location.reload();
     });
 
-    
+    // Hide delete box if the comment was not posted by the currently logged in user.
+    if (comment.username != username) {
+        deleteButtonElement.style.display = 'none';
+    }
+
     const buttonLineElement = document.createElement('div');
     buttonLineElement.className = 'd-flex w-100 justify-content-between';
     buttonLineElement.appendChild(deleteButtonElement);
