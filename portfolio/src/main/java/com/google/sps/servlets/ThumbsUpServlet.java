@@ -63,10 +63,10 @@ public final class ThumbsUpServlet extends HttpServlet {
         }
 
         if (isLikedComment(userInfoEntity, commentEntity)) {
-            decrementPopularity(commentEntity);
+            decrementPopularity(id);
             removeFromLikedComments(userInfoEntity, commentEntity);
         } else {
-            incrementPopularity(commentEntity);
+            incrementPopularity(id);
             addToLikedComments(userInfoEntity, commentEntity);
         }
 
@@ -98,12 +98,14 @@ public final class ThumbsUpServlet extends HttpServlet {
         return commentEntity;
     }
 
-    private void decrementPopularity(Entity commentEntity) {
+    private void decrementPopularity(long id) {
         // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Transaction txn = datastore.beginTransaction();
         try {
+            Entity commentEntity = getCommentEntity(id);
+
             // Get the previous thumbs up value.
             long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
             // Get the previous popularity value.
@@ -118,7 +120,7 @@ public final class ThumbsUpServlet extends HttpServlet {
             commentEntity.setProperty("popularity", newPopularity);
 
             // Add the updated entity back in the datastore.
-            datastore.put(commentEntity);
+            datastore.put(txn, commentEntity);
 
             txn.commit();
         } finally {
@@ -128,12 +130,14 @@ public final class ThumbsUpServlet extends HttpServlet {
         }
     }
 
-    private void incrementPopularity(Entity commentEntity) {
+    private void incrementPopularity(long id) {
         // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Transaction txn = datastore.beginTransaction();
         try {
+            Entity commentEntity = getCommentEntity(id);
+
             // Get the previous thumbs up value.
             long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
             // Get the previous popularity value.
@@ -148,7 +152,7 @@ public final class ThumbsUpServlet extends HttpServlet {
             commentEntity.setProperty("popularity", newPopularity);
 
             // Add the updated entity back in the datastore.
-            datastore.put(commentEntity);
+            datastore.put(txn, commentEntity);
 
             txn.commit();
         } finally {
