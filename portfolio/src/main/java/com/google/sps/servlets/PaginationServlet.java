@@ -48,15 +48,10 @@ public final class PaginationServlet extends HttpServlet {
         Entity userInfoEntity = getUserInfoEntity();
 
         // Prepare information to be passed as a json
-        long total = (long) allCommentsEntity.getProperty("total");
-        long max;
-        try {
-            max = (long) userInfoEntity.getProperty("max");
-        } catch (NullPointerException e) {
-            max = 10;
-        }
-        long page = (long) userInfoEntity.getProperty("page");
-        String filter = (String) userInfoEntity.getProperty("filter");
+        long total = (long) Optional.ofNullable(allCommentsEntity.getProperty("total")).orElse(0);
+        long max = (long) Optional.ofNullable(userInfoEntity.getProperty("max")).orElse(10);
+        long page = (long) Optional.ofNullable(userInfoEntity.getProperty("page")).orElse(1);
+        String filter = (String) Optional.ofNullable(userInfoEntity.getProperty("filter")).orElse("recent");
         
         // Convert to json.
         String json = "{\"total\": " + total + ", \"max\": " + max + ", \"page\": " + page + ", \"filter\": \"" + filter + "\"}";
