@@ -36,6 +36,8 @@ import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.TransactionOptions;
 
 @WebServlet("/thumbsdown-data")
 public final class ThumbsDownServlet extends HttpServlet {
@@ -100,42 +102,58 @@ public final class ThumbsDownServlet extends HttpServlet {
         // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        // Get the previous thumbs down value.
-        long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
-        // Get the previous popularity value.
-        long prevPopularity = (long) commentEntity.getProperty("popularity");
+        Transaction txn = datastore.beginTransaction();
+        try {
+            // Get the previous thumbs down value.
+            long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
+            // Get the previous popularity value.
+            long prevPopularity = (long) commentEntity.getProperty("popularity");
 
-        long newThumbsDown = prevThumbsDown + 1;
-        long newPopularity = prevPopularity - 1;
-        
-        // Update the thumbs down property to be the previous value plus one.
-        commentEntity.setProperty("thumbsdown", newThumbsDown);
-        // Update the popularity property to be the previous one minus one.
-        commentEntity.setProperty("popularity", newPopularity);
+            long newThumbsDown = prevThumbsDown + 1;
+            long newPopularity = prevPopularity - 1;
+            
+            // Update the thumbs down property to be the previous value plus one.
+            commentEntity.setProperty("thumbsdown", newThumbsDown);
+            // Update the popularity property to be the previous one minus one.
+            commentEntity.setProperty("popularity", newPopularity);
 
-        // Add the updated entity back in the datastore
-        datastore.put(commentEntity);
+            // Add the updated entity back in the datastore
+            datastore.put(commentEntity);
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+        }
     }
 
     private void incrementPopularity(Entity commentEntity) {
         // Instantiate datastore
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        // Get the previous thumbs down value.
-        long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
-        // Get the previous popularity value.
-        long prevPopularity = (long) commentEntity.getProperty("popularity");
+        Transaction txn = datastore.beginTransaction();
+        try {
+            // Get the previous thumbs down value.
+            long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
+            // Get the previous popularity value.
+            long prevPopularity = (long) commentEntity.getProperty("popularity");
 
-        long newThumbsDown = prevThumbsDown - 1;
-        long newPopularity = prevPopularity + 1;
-        
-        // Update the thumbs down property to be the previous value plus one.
-        commentEntity.setProperty("thumbsdown", newThumbsDown);
-        // Update the popularity property to be the previous one minus one.
-        commentEntity.setProperty("popularity", newPopularity);
+            long newThumbsDown = prevThumbsDown - 1;
+            long newPopularity = prevPopularity + 1;
+            
+            // Update the thumbs down property to be the previous value plus one.
+            commentEntity.setProperty("thumbsdown", newThumbsDown);
+            // Update the popularity property to be the previous one minus one.
+            commentEntity.setProperty("popularity", newPopularity);
 
-        // Add the updated entity back in the datastore
-        datastore.put(commentEntity);
+            // Add the updated entity back in the datastore
+            datastore.put(commentEntity);
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+        }
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
