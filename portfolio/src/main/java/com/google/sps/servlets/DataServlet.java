@@ -96,6 +96,7 @@ public final class DataServlet extends HttpServlet {
         List<Comment> comments = iterateQuery(resultsComments);
         String json = convertToJsonUsingGson(comments);
         response.setContentType("application/json;");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().println(json);
     }
 
@@ -113,12 +114,12 @@ public final class DataServlet extends HttpServlet {
         String name = (String) userInfoEntity.getProperty("name");
 
         // If the user opted to post the comment anonymously, make the name Anonymous.
-        String anonymous = getParameter(request, "anonymous", "off").orElse("off");
+        String anonymous = Optional.ofNullable(request.getParameter("anonymous")).orElse("off");
         if (anonymous.equals("on")) {
             name = "Anonymous";
         }
         
-        String comment = getParameter(request, "user-comment", null).orElse(null);
+        String comment = Optional.ofNullable(request.getParameter("user-comment")).orElse("error");
 
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
@@ -133,12 +134,6 @@ public final class DataServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Iterates over a comments query and returns an array of comments.

@@ -44,7 +44,7 @@ public final class LanguageServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the language input from the form.
-        String language = getParameter(request, "translate-comments", null).orElse(null);
+        String language = Optional.ofNullable(request.getParameter("search-by")).orElse("en");
 
         Entity userInfoEntity = getUserInfoEntity();
 
@@ -56,12 +56,6 @@ public final class LanguageServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

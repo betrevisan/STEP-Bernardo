@@ -45,14 +45,19 @@ public class LoginStatusServlet extends HttpServlet {
                 where = "/contact.html";
             }
 
-            String logoutUrl = userService.createLogoutURL(where);
+            String logoutUrl;
+            try {
+                logoutUrl = userService.createLogoutURL(where);
+            } catch (NullPointerException e) {
+                logoutUrl = userService.createLogoutURL("/contact.html");
+            }
 
             String username = getUsername(userService.getCurrentUser().getUserId());
 
             if (username == null) {
                 response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"null\"}");
             } else {
-                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\"}");
+                response.getWriter().println("{\"status\": \"True\", \"logoutUrl\": \"" + logoutUrl + "\", \"username\": \"" + username + "\"}");
             }
 
         } else {

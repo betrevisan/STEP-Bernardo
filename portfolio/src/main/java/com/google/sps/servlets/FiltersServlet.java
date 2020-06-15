@@ -44,10 +44,10 @@ public final class FiltersServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the filter input from the form.
-        String filter = getParameter(request, "filter-comments", null).orElse(null);
+        String filter = Optional.ofNullable(request.getParameter("filter-comments")).orElse("recent");
 
         // Get the search by input from the form.
-        String searchBy = getParameter(request, "search-by", null).orElse(null);
+        String searchBy = Optional.ofNullable(request.getParameter("search-by")).orElse("name");
 
         Entity userInfoEntity = getUserInfoEntity();
 
@@ -61,12 +61,6 @@ public final class FiltersServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

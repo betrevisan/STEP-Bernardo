@@ -20,6 +20,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -36,14 +37,14 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        String username = request.getParameter("user-username");
+        String username = Optional.ofNullable(request.getParameter("user-username")).orElse(null);
         // Ask for username again if the username chosen was not available.
         if (!usernameAvailable(username)) {
             response.sendRedirect("/contact.html");
             return;
         }
 
-        String name = request.getParameter("user-name");
+        String name = Optional.ofNullable(request.getParameter("user-name")).orElse(null);
 
         String id = userService.getCurrentUser().getUserId();
 
@@ -75,10 +76,6 @@ public class RegisterServlet extends HttpServlet {
         PreparedQuery results = datastore.prepare(query); 
         Entity entity = results.asSingleEntity(); 
 
-        if (entity == null) {
-            return true;
-        } else {
-            return false;
-        }    
+        return entity == null; 
     }
 }
