@@ -32,6 +32,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 
 @WebServlet("/thumbsdown-data")
 public final class ThumbsDownServlet extends HttpServlet {
@@ -45,7 +46,7 @@ public final class ThumbsDownServlet extends HttpServlet {
         Key commentEntityKey;
         try {
             commentEntityKey = KeyFactory.createKey("Comment", id);
-        } catch(Exception e) {
+        } catch(NullPointerException e) {
             response.setContentType("text/html;");
             response.getWriter().println("Unable to get comment's key.");
             return;
@@ -58,7 +59,7 @@ public final class ThumbsDownServlet extends HttpServlet {
         Entity commentEntity;
         try {
             commentEntity = datastore.get(commentEntityKey);
-        } catch(Exception e) {
+        } catch(EntityNotFoundException e) {
             response.setContentType("text/html;");
             response.getWriter().println("Unable to get comment.");
             return;

@@ -110,7 +110,7 @@ public final class PaginationServlet extends HttpServlet {
 
             return userInfoEntity;
 
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             // If the user is not logged in, return default user entity
             Entity defaultEntity = new Entity("UserInfo");
             defaultEntity.setProperty("max", (long) 10);

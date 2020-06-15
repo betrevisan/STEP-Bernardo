@@ -37,10 +37,11 @@ public class LoginStatusServlet extends HttpServlet {
         if (userService.isUserLoggedIn()) {
             Entity userInfoEntity = getUserInfoEntity();
 
-            String where;
+            String where = "/contact.html";
             try {
                 where = (String) userInfoEntity.getProperty("where");
             } catch (NullPointerException e) {
+                // If there is nothing in the where filed, set it to contact.html by default.
                 where = "/contact.html";
             }
 
