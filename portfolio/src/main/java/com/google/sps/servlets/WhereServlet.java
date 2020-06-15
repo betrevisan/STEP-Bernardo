@@ -19,6 +19,8 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.TransactionOptions;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -31,23 +33,30 @@ public class WhereServlet extends HttpServlet {
      @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         UserService userService = UserServiceFactory.getUserService();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // If the user is not logged in, then there is nothing to update.
         if (!userService.isUserLoggedIn()) {
             return;
         }
 
-        String newLocation = request.getParameter("newLocation");
+        Transaction txn = datastore.beginTransaction();
+        try {
+            String newLocation = request.getParameter("newLocation");
 
-        Entity userInfoEntity = getUserInfoEntity();
+            Entity userInfoEntity = getUserInfoEntity();
 
-        // Update the where property
-        userInfoEntity.setProperty("where", newLocation);
+            // Update the where property
+            userInfoEntity.setProperty("where", newLocation);
 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        
-        // Add the updated entity back in the datastore
-        datastore.put(userInfoEntity);
+            // Add the updated entity back in the datastore
+            datastore.put(userInfoEntity);
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+        }
 
         return;
     }
@@ -55,13 +64,22 @@ public class WhereServlet extends HttpServlet {
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
     private Entity getUserInfoEntity() {
         UserService userService = UserServiceFactory.getUserService();
-        String id = userService.getCurrentUser().getUserId();
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
-        Query query = new Query("UserInfo").setFilter(queryFilter);
-        PreparedQuery results = datastore.prepare(query); 
-        Entity userInfoEntity = results.asSingleEntity(); 
 
-        return userInfoEntity;
+        Transaction txn = datastore.beginTransaction();
+        try {
+            String id = userService.getCurrentUser().getUserId();
+            Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+            Query query = new Query("UserInfo").setFilter(queryFilter);
+            PreparedQuery results = datastore.prepare(query); 
+            Entity userInfoEntity = results.asSingleEntity();
+            txn.commit();
+            
+            return userInfoEntity;
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+        }
     }
 }
