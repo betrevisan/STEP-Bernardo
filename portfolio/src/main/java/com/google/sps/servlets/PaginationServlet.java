@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -47,10 +48,10 @@ public final class PaginationServlet extends HttpServlet {
         Entity userInfoEntity = getUserInfoEntity();
 
         // Prepare information to be passed as a json
-        long total = (long) allCommentsEntity.getProperty("total");
-        long max = (long) userInfoEntity.getProperty("max");
-        long page = (long) userInfoEntity.getProperty("page");
-        String filter = (String) userInfoEntity.getProperty("filter");
+        long total = (long) Optional.ofNullable(allCommentsEntity.getProperty("total")).orElse(0);
+        long max = (long) Optional.ofNullable(userInfoEntity.getProperty("max")).orElse(10);
+        long page = (long) Optional.ofNullable(userInfoEntity.getProperty("page")).orElse(1);
+        String filter = (String) Optional.ofNullable(userInfoEntity.getProperty("filter")).orElse("recent");
         
         // Convert to json.
         String json = "{\"total\": " + total + ", \"max\": " + max + ", \"page\": " + page + ", \"filter\": \"" + filter + "\"}";
@@ -63,7 +64,7 @@ public final class PaginationServlet extends HttpServlet {
         Entity userInfoEntity = getUserInfoEntity();
 
         // Update the page property of UserInfo.
-        long newPage = Long.parseLong(request.getParameter("i")) + 1;
+        long newPage = Long.parseLong(Optional.ofNullable(request.getParameter("i")).orElse(null)) + 1;
         userInfoEntity.setProperty("page", newPage);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.put(userInfoEntity);

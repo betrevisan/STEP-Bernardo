@@ -37,13 +37,19 @@ public class LoginStatusServlet extends HttpServlet {
         if (userService.isUserLoggedIn()) {
             Entity userInfoEntity = getUserInfoEntity();
 
-            String where = (String) userInfoEntity.getProperty("where");
-            // If there is nothing in the where filed, set it to contact.html by default.
-            if (where == null) {
+            String where;
+            try {
+                where = (String) userInfoEntity.getProperty("where");
+            } catch (NullPointerException e) {
                 where = "/contact.html";
             }
 
-            String logoutUrl = userService.createLogoutURL(where);
+            String logoutUrl;
+            try {
+                logoutUrl = userService.createLogoutURL(where);
+            } catch (NullPointerException e) {
+                logoutUrl = userService.createLogoutURL("/contact.html");
+            }
 
             String username = getUsername(userService.getCurrentUser().getUserId());
 

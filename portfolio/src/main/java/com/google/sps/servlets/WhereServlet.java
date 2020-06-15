@@ -20,6 +20,7 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 import java.io.IOException;
+import java.util.Optional;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +38,7 @@ public class WhereServlet extends HttpServlet {
             return;
         }
 
-        String newLocation = request.getParameter("newLocation");
+        String newLocation = Optional.ofNullable(request.getParameter("newLocation")).orElse("/index.html");
 
         Entity userInfoEntity = getUserInfoEntity();
 
