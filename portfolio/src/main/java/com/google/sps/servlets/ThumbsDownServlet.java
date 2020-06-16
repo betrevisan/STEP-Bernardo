@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.UserInfo;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -51,6 +52,7 @@ public final class ThumbsDownServlet extends HttpServlet {
         }
 
         Entity userInfoEntity = getUserInfoEntity();
+        UserInfo userInfo = new UserInfo(userInfoEntity);
         
         // Get comment's id (which was passed as a parameter).
         long id = Long.parseLong(request.getParameter("id"));
@@ -64,17 +66,18 @@ public final class ThumbsDownServlet extends HttpServlet {
 
         Comment comment = new Comment(commentEntity);
 
-        if (isUnlikedComment(userInfoEntity, commentEntity)) {
+        if (userInfo.isUnlikedComment(commentEntity)) {
             comment.decrementThumbsdown();
             comment.incrementPopularity();
-            removeFromUnlikedComments(userInfoEntity, commentEntity);
+            userInfo.removeFromUnlikedComments(commentEntity);
         } else {
             comment.incrementThumbsdown();
             comment.decrementPopularity();
-            addToUnlikedComments(userInfoEntity, commentEntity);
+            userInfo.addToUnlikedComments(commentEntity);
         }
 
         comment.updateDatabase(commentEntity);
+        userInfo.updateDatabase(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
@@ -112,35 +115,5 @@ public final class ThumbsDownServlet extends HttpServlet {
         Query query = new Query("UserInfo").setFilter(queryFilter);
 
         return datastore.prepare(query).asSingleEntity();
-    }
-
-    private void addToUnlikedComments(Entity userInfoEntity, Entity commentEntity) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<Key> unliked = (ArrayList<Key>) userInfoEntity.getProperty("unliked");
-
-        if (unliked == null) {
-            unliked =  new ArrayList<Key>();
-        }
-
-        unliked.add(commentEntity.getKey());
-        userInfoEntity.setProperty("unliked", unliked);
-        datastore.put(userInfoEntity);
-    }
-
-    private void removeFromUnlikedComments(Entity userInfoEntity, Entity commentEntity) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<Key> unliked = (ArrayList<Key>) userInfoEntity.getProperty("unliked");
-
-        unliked.remove(commentEntity.getKey());
-        userInfoEntity.setProperty("unliked", unliked);
-        datastore.put(userInfoEntity);
-    }
-
-    private boolean isUnlikedComment(Entity userInfoEntity, Entity commentEntity) {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<Key> unliked = (ArrayList<Key>) userInfoEntity.getProperty("unliked");
-        Key commentKey = commentEntity.getKey();
-
-        return unliked != null && unliked.contains(commentKey);
     }
 }
