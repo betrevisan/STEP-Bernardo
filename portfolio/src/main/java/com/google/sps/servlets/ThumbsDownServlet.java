@@ -62,14 +62,19 @@ public final class ThumbsDownServlet extends HttpServlet {
             return;
         }
 
+        Comment comment = new Comment(commentEntity);
+
         if (isUnlikedComment(userInfoEntity, commentEntity)) {
-            incrementPopularity(id);
+            comment.decrementThumbsdown();
+            comment.incrementPopularity();
             removeFromUnlikedComments(userInfoEntity, commentEntity);
         } else {
-            decrementPopularity(id);
+            comment.incrementThumbsdown();
+            comment.decrementPopularity();
             addToUnlikedComments(userInfoEntity, commentEntity);
         }
 
+        comment.updateDatabase(commentEntity);
 
         response.sendRedirect("/contact.html");
         return;
@@ -97,69 +102,7 @@ public final class ThumbsDownServlet extends HttpServlet {
 
         return commentEntity;
     }
-
-    private void decrementPopularity(long id) {
-        // Instantiate datastore
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Transaction txn = datastore.beginTransaction();
-        try {
-            Entity commentEntity = getCommentEntity(id);
-
-            // Get the previous thumbs down value.
-            long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
-            // Get the previous popularity value.
-            long prevPopularity = (long) commentEntity.getProperty("popularity");
-
-            long newThumbsDown = prevThumbsDown + 1;
-            long newPopularity = prevPopularity - 1;
-            
-            // Update the thumbs down property to be the previous value plus one.
-            commentEntity.setProperty("thumbsdown", newThumbsDown);
-            // Update the popularity property to be the previous one minus one.
-            commentEntity.setProperty("popularity", newPopularity);
-
-            // Add the updated entity back in the datastore
-            datastore.put(txn, commentEntity);
-            txn.commit();
-        } finally {
-            if (txn.isActive()) {
-                txn.rollback();
-            }
-        }
-    }
-
-    private void incrementPopularity(long id) {
-        // Instantiate datastore
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Transaction txn = datastore.beginTransaction();
-        try {
-            Entity commentEntity = getCommentEntity(id);
-
-            // Get the previous thumbs down value.
-            long prevThumbsDown = (long) commentEntity.getProperty("thumbsdown");
-            // Get the previous popularity value.
-            long prevPopularity = (long) commentEntity.getProperty("popularity");
-
-            long newThumbsDown = prevThumbsDown - 1;
-            long newPopularity = prevPopularity + 1;
-            
-            // Update the thumbs down property to be the previous value plus one.
-            commentEntity.setProperty("thumbsdown", newThumbsDown);
-            // Update the popularity property to be the previous one minus one.
-            commentEntity.setProperty("popularity", newPopularity);
-
-            // Add the updated entity back in the datastore
-            datastore.put(txn, commentEntity);
-            txn.commit();
-        } finally {
-            if (txn.isActive()) {
-                txn.rollback();
-            }
-        }
-    }
-
+    
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
     private Entity getUserInfoEntity() {
         UserService userService = UserServiceFactory.getUserService();
