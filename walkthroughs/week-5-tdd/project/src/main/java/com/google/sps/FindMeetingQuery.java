@@ -25,8 +25,9 @@ public final class FindMeetingQuery {
     
     public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
         Collection<String> attendeesRequest = request.getAttendees();
-        // If there are no requested attendees, return available time range as the whole day.
-        if (attendeesRequest.isEmpty()) {
+        Collection<String> attendeesOptional = request.getOptionalAttendees();
+        // If there are no requested attendees and no optional attendees, return available time range as the whole day.
+        if (attendeesRequest.isEmpty() && attendeesOptional.isEmpty()) {
             return Arrays.asList(TimeRange.WHOLE_DAY);
         }
 
@@ -36,6 +37,44 @@ public final class FindMeetingQuery {
             return Arrays.asList();
         }
 
+        // If there are at least one optional attendee, consider them.
+        if (!attendeesOptional.isEmpty()) {
+            List<TimeRange> available = considerOptionalAttendees(events, attendeesRequest, attendeesOptional, durationRequest);
+
+            // If there was no available time range considering the optional attendees, try just considering the required attendees (if not empty).
+            if (available.isEmpty() && !attendeesRequest.isEmpty()) {
+                available = disconsiderOptionalAttendees(events, attendeesRequest, durationRequest);
+            }
+
+            return available;
+        } else {
+            // If there are no optional attendees, just consider the required ones.
+            List<TimeRange> available = disconsiderOptionalAttendees(events, attendeesRequest, durationRequest);
+            return available;
+        }
+    }
+
+    public List<TimeRange> considerOptionalAttendees(Collection<Event> events, Collection<String> attendeesRequest, Collection<String> attendeesOptional, long durationRequest) {
+        // Add optional attendees to the requested attendees. 
+        ArrayList<String> attendeesRequestList = new ArrayList<String>(attendeesRequest);
+        ArrayList<String> attendeesOptionalList = new ArrayList<String>(attendeesOptional);
+        attendeesRequestList.addAll(attendeesOptionalList);
+
+        List<TimeRange> conflicts = new ArrayList<TimeRange>();
+        Iterator<Event> eventsIterator = events.iterator();
+        while (eventsIterator.hasNext()) {
+            Event event = eventsIterator.next();
+
+            // If there is at least one required or optional attendee in the given event, this event should affect the returned time range.
+            if (!Collections.disjoint(attendeesRequestList, event.getAttendees())) {
+                conflicts.add(event.getWhen());
+            }
+        }
+
+        return findAvailableTimeSlot(conflicts, durationRequest);
+    }
+
+    public List<TimeRange> disconsiderOptionalAttendees(Collection<Event> events, Collection<String> attendeesRequest, long durationRequest) {
         List<TimeRange> conflicts = new ArrayList<TimeRange>();
         Iterator<Event> eventsIterator = events.iterator();
         while (eventsIterator.hasNext()) {
@@ -43,11 +82,14 @@ public final class FindMeetingQuery {
 
             // If there is at least one required attendee in the given event, this event should affect the returned time range.
             if (!Collections.disjoint(attendeesRequest, event.getAttendees())) {
-                //System.out.println("Conflict: " + event.getWhen());
                 conflicts.add(event.getWhen());
             }
         }
 
+        return findAvailableTimeSlot(conflicts, durationRequest);
+    }
+
+    public List<TimeRange> findAvailableTimeSlot(List<TimeRange> conflicts, long durationRequest) {
         Collections.sort(conflicts, TimeRange.ORDER_BY_START);
 
         List<TimeRange> available = new ArrayList<TimeRange>();
