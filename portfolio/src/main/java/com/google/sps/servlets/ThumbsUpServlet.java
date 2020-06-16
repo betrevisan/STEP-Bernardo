@@ -26,6 +26,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.UserInfo;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -51,6 +52,7 @@ public final class ThumbsUpServlet extends HttpServlet {
         }
 
         Entity userInfoEntity = getUserInfoEntity();
+        UserInfo userInfo = new UserInfo(userInfoEntity);
 
         // Get comment's id (which was passed as a parameter).
         long id = Long.parseLong(request.getParameter("id"));
@@ -64,17 +66,18 @@ public final class ThumbsUpServlet extends HttpServlet {
 
         Comment comment = new Comment(commentEntity);
 
-        if (isLikedComment(userInfoEntity, commentEntity)) {
+        if (userInfo.isLikedComment(commentEntity)) {
             comment.decrementThumbsup();
             comment.decrementPopularity();
-            removeFromLikedComments(userInfoEntity, commentEntity);
+            userInfo.removeFromLikedComments(commentEntity);
         } else {
             comment.incrementThumbsup();
             comment.incrementPopularity();
-            addToLikedComments(userInfoEntity, commentEntity);
+            userInfo.addToLikedComments(commentEntity);
         }
 
         comment.updateDatabase(commentEntity);
+        userInfo.updateDatabase(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
