@@ -46,15 +46,10 @@ public final class FiltersServlet extends HttpServlet {
         // Get the filter input from the form.
         String filter = Optional.ofNullable(request.getParameter("filter-comments")).orElse("recent");
 
-        // Get the search by input from the form.
-        String searchBy = Optional.ofNullable(request.getParameter("search-by")).orElse("name");
-
         Entity userInfoEntity = getUserInfoEntity();
 
         // Update the filter property
         userInfoEntity.setProperty("filter", filter);
-        // Update the search by property
-        userInfoEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
         datastore.put(userInfoEntity);
