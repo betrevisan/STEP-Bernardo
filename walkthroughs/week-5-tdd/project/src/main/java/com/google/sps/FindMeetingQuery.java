@@ -85,26 +85,26 @@ public final class FindMeetingQuery {
         int start = TimeRange.START_OF_DAY;
         int end = TimeRange.END_OF_DAY;
         int first = 1;
-        for (TimeRange when : conflicts) {
+        for (TimeRange conflict : conflicts) {
             if (first == 1) {
                 first = 0;
-                start = when.start();
-                end = when.end();
+                start = conflict.start();
+                end = conflict.end();
                 if (start - TimeRange.START_OF_DAY > durationRequest) {
                     available.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false));
                 }
-            } else if (when.end() > end && when.start() < end) {
-                start = when.start();
-                end = when.end();
-            } else if (when.end() > end && (when.start() - end) < durationRequest) {
-                start = when.start();
-                end = when.end();
-            } else if (when.end() <= end) {
+            } else if (conflict.end() > end && conflict.start() < end) {
+                start = conflict.start();
+                end = conflict.end();
+            } else if (conflict.end() > end && (conflict.start() - end) < durationRequest) {
+                start = conflict.start();
+                end = conflict.end();
+            } else if (conflict.end() <= end) {
                 continue;
             } else {
-                available.add(TimeRange.fromStartEnd(end, when.start(), false));
-                start = when.start();
-                end = when.end();
+                available.add(TimeRange.fromStartEnd(end, conflict.start(), false));
+                start = conflict.start();
+                end = conflict.end();
             }
         }
         if (end == TimeRange.END_OF_DAY) {
