@@ -37,7 +37,7 @@ public final class FindMeetingQuery {
             return Arrays.asList();
         }
 
-        // If there are at least one optional attendee, consider them.
+        // If there is at least one optional attendee, consider them.
         if (!attendeesOptional.isEmpty()) {
             List<TimeRange> available = considerAttendees(events, attendeesRequest, attendeesOptional, durationRequest);
 
@@ -57,6 +57,7 @@ public final class FindMeetingQuery {
     public List<TimeRange> considerAttendees(Collection<Event> events, Collection<String> attendeesRequest, long durationRequest) {
         List<TimeRange> conflicts = new ArrayList<TimeRange>();
         Iterator<Event> eventsIterator = events.iterator();
+        // Get all the conflicting events.
         while (eventsIterator.hasNext()) {
             Event event = eventsIterator.next();
 
@@ -78,6 +79,7 @@ public final class FindMeetingQuery {
         return considerAttendees(events, attendeesRequestList, durationRequest);
     }
 
+    // Returns a list of available time ranges for the requested event, given its duration and a list of time ranges for any conflicting events.
     public List<TimeRange> findAvailableTimeSlot(List<TimeRange> conflicts, long durationRequest) {
         Collections.sort(conflicts, TimeRange.ORDER_BY_START);
 
@@ -86,29 +88,51 @@ public final class FindMeetingQuery {
         int end = TimeRange.END_OF_DAY;
         int first = 1;
         for (TimeRange conflict : conflicts) {
+            // If this is the first conflict seen, then set the start and end variables as the start and end of that conflict.
             if (first == 1) {
                 first = 0;
                 start = conflict.start();
                 end = conflict.end();
+
+                // If there is enough time for the requested event to happen before the first conflic, then add the time range from the start
+                // of the day to the start of the first conflict as an available time range.
                 if (start - TimeRange.START_OF_DAY > durationRequest) {
                     available.add(TimeRange.fromStartEnd(TimeRange.START_OF_DAY, start, false));
                 }
+            
+            // This case accounts for conflicts that have some overlap with the previous conflict but end after it.
+            // If the end of the current conflict is greater than the end of the previous conflict and the start of the current conflict is less
+            // than the end of the previous conflict, then update the start and end variables to the start and end of the new conflict.
             } else if (conflict.end() > end && conflict.start() < end) {
                 start = conflict.start();
                 end = conflict.end();
+
+            // This case accounts for conflicts that do not overlap but that do not have enough space between them to accommodate the requested event.
+            // If the end of the current conflict is greater than the end of the previous conflict and there is not enough space for the requested
+            // event to be scheduled between the end of the previous conflict and then start of the current conflict, then update the start and end
+            // variables to the start and end of the new conflict.
             } else if (conflict.end() > end && (conflict.start() - end) < durationRequest) {
                 start = conflict.start();
                 end = conflict.end();
+            
+            // This case accounts for conflicts that completely overlap with an earlier conflict. 
+            // If that is the case they should be ignored because the earlier conflict accounts for that.
             } else if (conflict.end() <= end) {
                 continue;
+            
+            // If there is enough time between the end of the last conflict and the start of the current one, add the time range between them as an
+            // available time range and update the start and end variables to the start and end of the current conflict.
             } else {
                 available.add(TimeRange.fromStartEnd(end, conflict.start(), false));
                 start = conflict.start();
                 end = conflict.end();
             }
         }
-        if (end == TimeRange.END_OF_DAY) {
+        // If there was no conflict, set the available time range as the whole day (from start to end of the day).
+        if (first == 1) {
             available.add(TimeRange.fromStartEnd(start, end, true));
+        // If there was at least one conflict and there is enough time between the end of the last conflict and the end of the day,
+        // then add that time range as an available time range.
         } else if (TimeRange.END_OF_DAY - end >= durationRequest) {
             available.add(TimeRange.fromStartEnd(end, TimeRange.END_OF_DAY, true));
         }
