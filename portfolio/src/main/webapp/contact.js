@@ -13,14 +13,21 @@
 // limitations under the License.
 
 function getComments() {
+    // Get the username of the user who is currently logged in. Null if the user is not logged in.
+    var username = null;
+    fetch("/login-status").then(response => response.json()).then((loginInfo) => {
+        username = loginInfo.username;
+    });
+
+    // Display the comments
     fetch('/data').then(response => response.json()).then((comments) => {
         comments.forEach((comment) => {
-            document.getElementById('comments-list').appendChild(createCommentBox(comment));
+            document.getElementById('comments-list').appendChild(createCommentBox(comment, username));
         })
     });
 }
 
-function createCommentBox(comment) {
+function createCommentBox(comment, username) {
     const commmentElement = document.createElement('li');
     commmentElement.className = 'list-group-item';
 
@@ -91,7 +98,7 @@ function createCommentBox(comment) {
 
     const deleteButtonElement = document.createElement('button');
     deleteButtonElement.innerText = 'Delete';
-    reactionsLineElement.style.textAlign = 'right';
+    deleteButtonElement.style.textAlign = 'right';
     deleteButtonElement.className = 'btn btn-default btn-lg';
     deleteButtonElement.addEventListener('click', () => {
         deleteComment(comment);
@@ -102,7 +109,11 @@ function createCommentBox(comment) {
         location.reload();
     });
 
-    
+    // Hide delete box if the comment was not posted by the currently logged in user.
+    if (comment.username != username) {
+        deleteButtonElement.style.display = 'none';
+    }
+
     const buttonLineElement = document.createElement('div');
     buttonLineElement.className = 'd-flex w-100 justify-content-between';
     buttonLineElement.appendChild(deleteButtonElement);

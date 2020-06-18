@@ -44,7 +44,7 @@ public final class MaxCommentsServlet extends HttpServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Get the max-comments input from the form.
-        String max = getParameter(request, "max-comments", null).orElse(null);
+        String max = Optional.ofNullable(request.getParameter("max-comments")).orElse(null);
 
         // If a maximum number of comments has been selected, only update the maxComments variable and return.
         if (max != null) {
@@ -70,12 +70,6 @@ public final class MaxCommentsServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.

@@ -96,6 +96,7 @@ public final class DataServlet extends HttpServlet {
         List<Comment> comments = iterateQuery(resultsComments);
         String json = convertToJsonUsingGson(comments);
         response.setContentType("application/json;");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().println(json);
     }
 
@@ -113,12 +114,12 @@ public final class DataServlet extends HttpServlet {
         String name = (String) userInfoEntity.getProperty("name");
 
         // If the user opted to post the comment anonymously, make the name Anonymous.
-        String anonymous = getParameter(request, "anonymous", "off").orElse("off");
+        String anonymous = Optional.ofNullable(request.getParameter("anonymous")).orElse("off");
         if (anonymous.equals("on")) {
             name = "Anonymous";
         }
         
-        String comment = getParameter(request, "user-comment", null).orElse(null);
+        String comment = Optional.ofNullable(request.getParameter("user-comment")).orElse("error");
 
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
@@ -133,12 +134,6 @@ public final class DataServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Returns the desired parameter entered by the user, or null if the user input was invalid.
-    private Optional<String> getParameter(HttpServletRequest request, String name, String defaultValue) {
-        String value = request.getParameter(name);
-        return Optional.ofNullable(value);
     }
 
     // Iterates over a comments query and returns an array of comments.
@@ -165,10 +160,32 @@ public final class DataServlet extends HttpServlet {
 
                 // Only add comment when it is part of the page the user is currently in.
                 if (count >= (maxComments * (page - 1))) {
+<<<<<<< HEAD
                     Comment comment = new Comment(entity);
 
                     comment.translateComment(language);
 
+=======
+                    long id = entity.getKey().getId();
+                    String content = (String) entity.getProperty("content");
+                    long time = (long) entity.getProperty("time");
+                    long thumbsup = (long) entity.getProperty("thumbsup");
+                    long thumbsdown = (long) entity.getProperty("thumbsdown");
+                    String name = (String) entity.getProperty("name");
+                    String email = (String) entity.getProperty("email");
+                    String username = (String) entity.getProperty("username");
+
+                    String translatedComment = null;
+                    try {
+                        // Translate comment
+                        Translation translation = translate.translate(content, Translate.TranslateOption.targetLanguage(language));
+                        translatedComment = translation.getTranslatedText();
+                    } catch (RuntimeException e) {
+                        translatedComment = content;
+                    }
+
+                    Comment comment = new Comment(id, translatedComment, time, thumbsup, thumbsdown, name, email, username);
+>>>>>>> 45c9485a2c09cfb25dcb0f5762e4f9618c72c73e
                     comments.add(comment);
                 }
             }
@@ -257,7 +274,7 @@ public final class DataServlet extends HttpServlet {
 
             return userInfoEntity;
 
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             // If the user is not logged in, return default user entity
             Entity defaultEntity = new Entity("UserInfo");
             defaultEntity.setProperty("max", (long) 10);

@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import com.google.gson.Gson;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -39,6 +40,7 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Transaction;
 import com.google.appengine.api.datastore.TransactionOptions;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 
 @WebServlet("/thumbsup-data")
 public final class ThumbsUpServlet extends HttpServlet {
@@ -103,7 +105,7 @@ public final class ThumbsUpServlet extends HttpServlet {
         Key commentEntityKey;
         try {
             commentEntityKey = KeyFactory.createKey("Comment", id);
-        } catch(Exception e) {
+        } catch(NullPointerException e) {
             return null;
         }
 
@@ -111,7 +113,7 @@ public final class ThumbsUpServlet extends HttpServlet {
         Entity commentEntity;
         try {
             commentEntity = datastore.get(commentEntityKey);
-        } catch(Exception e) {
+        } catch(EntityNotFoundException e) {
             return null;
         }
 
