@@ -51,33 +51,45 @@ public final class ThumbsDownServlet extends HttpServlet {
             return;
         }
 
-        Entity userInfoEntity = getUserInfoEntity();
-        UserInfo userInfo = new UserInfo(userInfoEntity);
-        
-        // Get comment's id (which was passed as a parameter).
-        long id = Long.parseLong(request.getParameter("id"));
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        Entity commentEntity = getCommentEntity(id);
-        if (commentEntity == null) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment.");
-            return;
+        TransactionOptions options = TransactionOptions.Builder.withXG(true);
+        Transaction txn = datastore.beginTransaction(options);
+        try {
+            Entity userInfoEntity = getUserInfoEntity();
+            UserInfo userInfo = new UserInfo(userInfoEntity);
+            
+            // Get comment's id (which was passed as a parameter).
+            long id = Long.parseLong(request.getParameter("id"));
+
+            Entity commentEntity = getCommentEntity(id);
+            if (commentEntity == null) {
+                response.setContentType("text/html;");
+                response.getWriter().println("Unable to get comment.");
+                return;
+            }
+
+            Comment comment = new Comment(commentEntity);
+
+            if (userInfo.isUnlikedComment(commentEntity)) {
+                comment.decrementThumbsdown();
+                comment.incrementPopularity();
+                userInfo.removeFromUnlikedComments(commentEntity);
+            } else {
+                comment.incrementThumbsdown();
+                comment.decrementPopularity();
+                userInfo.addToUnlikedComments(commentEntity);
+            }
+
+            comment.updateDatabase(commentEntity, txn);
+            userInfo.updateDatabase(userInfoEntity, txn);
+
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
         }
-
-        Comment comment = new Comment(commentEntity);
-
-        if (userInfo.isUnlikedComment(commentEntity)) {
-            comment.decrementThumbsdown();
-            comment.incrementPopularity();
-            userInfo.removeFromUnlikedComments(commentEntity);
-        } else {
-            comment.incrementThumbsdown();
-            comment.decrementPopularity();
-            userInfo.addToUnlikedComments(commentEntity);
-        }
-
-        comment.updateDatabase(commentEntity);
-        userInfo.updateDatabase(userInfoEntity);
 
         response.sendRedirect("/contact.html");
         return;
