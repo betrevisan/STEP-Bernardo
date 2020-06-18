@@ -112,11 +112,13 @@ public final class DataServlet extends HttpServlet {
         // Get the information of the currently logged in user.
         Entity userInfoEntity = getUserInfoEntity();
         String name = (String) userInfoEntity.getProperty("name");
+        String username = (String) userInfoEntity.getProperty("username");
 
         // If the user opted to post the comment anonymously, make the name Anonymous.
         String anonymous = Optional.ofNullable(request.getParameter("anonymous")).orElse("off");
         if (anonymous.equals("on")) {
             name = "Anonymous";
+            username = "anonymous";
         }
         
         String comment = Optional.ofNullable(request.getParameter("user-comment")).orElse("error");
@@ -124,8 +126,6 @@ public final class DataServlet extends HttpServlet {
         // Get current user's email.
         UserService userService = UserServiceFactory.getUserService();
         String email = userService.getCurrentUser().getEmail();
-
-        String username = (String) userInfoEntity.getProperty("username");
 
         // Add comment to the datastore.
         createComment(comment, name, email, username);
