@@ -41,17 +41,14 @@ public final class FindMeetingQuery {
         if (!attendeesOptional.isEmpty()) {
             List<TimeRange> available = considerAttendees(events, attendeesRequest, attendeesOptional, durationRequest);
 
-            // If there was no available time range considering the optional attendees, try just considering the required attendees (if not empty).
-            if (available.isEmpty() && !attendeesRequest.isEmpty()) {
-                available = considerAttendees(events, attendeesRequest, durationRequest);
+            // If there was an available time range considering the optional attendees or if there are no required attendees, return available.
+            if (!available.isEmpty() || attendeesRequest.isEmpty()) {
+                return available;
             }
-
-            return available;
-        } else {
-            // If there are no optional attendees, just consider the required ones.
-            List<TimeRange> available = considerAttendees(events, attendeesRequest, durationRequest);
-            return available;
         }
+
+        // If there are no optional attendees or no available time range considering optional attendees, just consider the required ones.
+        return considerAttendees(events, attendeesRequest, durationRequest);
     }
 
     public List<TimeRange> considerAttendees(Collection<Event> events, Collection<String> attendeesRequest, long durationRequest) {
