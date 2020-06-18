@@ -110,24 +110,15 @@ public final class Comment {
         }
     }
 
-    public void updateDatabase(Entity commentEntity) {
+    public void updateDatabase(Entity commentEntity, Transaction txn) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        // Update properties that can be changed.
+        commentEntity.setProperty("thumbsup", this.thumbsup);
+        commentEntity.setProperty("thumbsdown", this.thumbsdown);
+        commentEntity.setProperty("popularity", this.popularity);
 
-        Transaction txn = datastore.beginTransaction();
-        try {
-            // Update properties that can be changed.
-            commentEntity.setProperty("thumbsup", this.thumbsup);
-            commentEntity.setProperty("thumbsdown", this.thumbsdown);
-            commentEntity.setProperty("popularity", this.popularity);
-
-            // Add the updated entity back in the datastore
-            datastore.put(txn, commentEntity);
-            txn.commit();
-        } finally {
-            if (txn.isActive()) {
-                txn.rollback();
-            }
-        }
+        // Add the updated entity back in the datastore
+        datastore.put(txn, commentEntity);
 
         return;
     }
