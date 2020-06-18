@@ -104,24 +104,16 @@ public final class UserInfo {
         return unliked != null && unliked.contains(commentKey);
     }
 
-    public void updateDatabase(Entity userInfoEntity) {
+    public void updateDatabase(Entity userInfoEntity, Transaction txn) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-        Transaction txn = datastore.beginTransaction();
-        try {
-            // Update properties that can be changed.
-            userInfoEntity.setProperty("unliked", this.unliked);
-            userInfoEntity.setProperty("liked", this.liked);
+        // Update properties that can be changed.
+        userInfoEntity.setProperty("unliked", this.unliked);
+        userInfoEntity.setProperty("liked", this.liked);
 
-            // Add the updated entity back in the datastore
-            datastore.put(txn, userInfoEntity);
-            txn.commit();
-        } finally {
-            if (txn.isActive()) {
-                txn.rollback();
-            }
-        }
-
+        // Add the updated entity back in the datastore
+        datastore.put(txn, userInfoEntity);
+        
         return;
     }
 }
