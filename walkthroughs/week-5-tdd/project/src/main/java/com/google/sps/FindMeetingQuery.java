@@ -86,11 +86,11 @@ public final class FindMeetingQuery {
         List<TimeRange> available = new ArrayList<TimeRange>();
         int start = TimeRange.START_OF_DAY;
         int end = TimeRange.END_OF_DAY;
-        int first = 1;
+        boolean first = true;
         for (TimeRange conflict : conflicts) {
             // If this is the first conflict seen, then set the start and end variables as the start and end of that conflict.
-            if (first == 1) {
-                first = 0;
+            if (first == true) {
+                first = false;
                 start = conflict.start();
                 end = conflict.end();
 
@@ -129,7 +129,7 @@ public final class FindMeetingQuery {
             }
         }
         // If there was no conflict, set the available time range as the whole day (from start to end of the day).
-        if (first == 1) {
+        if (first == true) {
             available.add(TimeRange.fromStartEnd(start, end, true));
         // If there was at least one conflict and there is enough time between the end of the last conflict and the end of the day,
         // then add that time range as an available time range.
