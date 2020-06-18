@@ -28,7 +28,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
-import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -37,18 +36,17 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.datastore.FetchOptions;
 
 @WebServlet("/pagination")
 public final class PaginationServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Entity allCommentsEntity = getAllCommentsEntity();
-
         Entity userInfoEntity = getUserInfoEntity();
 
         // Prepare information to be passed as a json
-        long total = (long) Optional.ofNullable(allCommentsEntity.getProperty("total")).orElse(0);
+        long total = getTotal();
         long max = (long) Optional.ofNullable(userInfoEntity.getProperty("max")).orElse(10);
         long page = (long) Optional.ofNullable(userInfoEntity.getProperty("page")).orElse(1);
         String filter = (String) Optional.ofNullable(userInfoEntity.getProperty("filter")).orElse("recent");
@@ -71,30 +69,6 @@ public final class PaginationServlet extends HttpServlet {
 
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    //Converts the comments array  into a JSON string using the Gson library.
-    private String convertToJsonUsingGson(List<AllComments> allComments) {
-        Gson gson = new Gson();
-        String json = gson.toJson(allComments);
-        return json;
-    }
-
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
-    private Entity getAllCommentsEntity() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-
-        // Return null if there are no AllComments entity.
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
     }
 
     // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
@@ -120,5 +94,11 @@ public final class PaginationServlet extends HttpServlet {
             defaultEntity.setProperty("searchBy", "name");
             return defaultEntity;
         }
+    }
+
+    private long getTotal() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("Comment");
+        return datastore.prepare(query).countEntities(FetchOptions.Builder.withDefaults());
     }
 }
