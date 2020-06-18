@@ -44,36 +44,7 @@ public final class DeleteServlet extends HttpServlet {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         datastore.delete(commentEntityKey);
 
-        changeAllCommentsTotal(-1);
-
         response.sendRedirect("/contact.html");
         return;
-    }
-
-    // Changes the value of the total property in AllComments and updates the datastore.
-    private void changeAllCommentsTotal(int value) {
-        Entity allCommentsEntity = getAllCommentsEntity();
-        long prevTotal = (long) allCommentsEntity.getProperty("total");
-        long newTotal = prevTotal + value;
-        allCommentsEntity.setProperty("total", newTotal);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(allCommentsEntity);
-    }
-
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
-    private Entity getAllCommentsEntity() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-
-        // Return null if there are no AllComments entity.
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
     }
 }
