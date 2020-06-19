@@ -28,6 +28,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -37,18 +38,23 @@ import com.google.appengine.api.datastore.Query.FilterOperator;
 import com.google.appengine.api.datastore.Query.Filter;
 import com.google.appengine.api.datastore.Query.FilterPredicate;
 
-@WebServlet("/filters")
-public final class FiltersServlet extends HttpServlet {
+@WebServlet("/search")
+public final class SearchServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Get the filter input from the form.
-        String filter = Optional.ofNullable(request.getParameter("filter-comments")).orElse("recent");
+        // Get the search input from the form.
+        String searchInput = Optional.ofNullable(request.getParameter("search-input")).orElse(null);
+
+        // Get the search by input from the form.
+        String searchBy = Optional.ofNullable(request.getParameter("search-by")).orElse("name");
 
         Entity userInfoEntity = getUserInfoEntity();
 
-        // Update the filter property
-        userInfoEntity.setProperty("filter", filter);
+        // Update the search input property
+        userInfoEntity.setProperty("searchInput", searchInput);
+        // Update the search by property
+        userInfoEntity.setProperty("searchBy", searchBy);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         // Add the updated entity back in the datastore
         datastore.put(userInfoEntity);

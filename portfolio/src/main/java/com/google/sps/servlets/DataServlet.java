@@ -69,19 +69,22 @@ public final class DataServlet extends HttpServlet {
             case "bottom":
                 queryComments = new Query("Comment").addSort("popularity", SortDirection.ASCENDING);
                 break;
-            case "alphabetical":
+            default:
                 queryComments = new Query("Comment").addSort("name", SortDirection.ASCENDING);
                 break;
-            default:
-                String searchBy = (String) userInfoEntity.getProperty("searchBy");
-                Filter searchFilter = null;
-                if (searchBy.equals("username")) {
-                    searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, selectedFilter);
-                } else {
-                    searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, selectedFilter);
-                }
-                queryComments = new Query("Comment").setFilter(searchFilter);
-                break;
+        }
+ 
+        // Add the appropriate searchBy filter.
+        String searchBy = (String) userInfoEntity.getProperty("searchBy");
+        String searchInput = (String) userInfoEntity.getProperty("searchInput");
+        if (searchInput != null) {
+            Filter searchFilter = null;
+            if (searchBy.equals("username")) {
+                searchFilter = new FilterPredicate("username", FilterOperator.EQUAL, searchInput);
+            } else {
+                searchFilter = new FilterPredicate("name", FilterOperator.EQUAL, searchInput);
+            }
+            queryComments = queryComments.setFilter(searchFilter);
         }
         
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

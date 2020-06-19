@@ -115,11 +115,11 @@
             </div>
         </form>
 
-        <form action="/filters" method="POST">
+        <form action="/search" method="POST">
             <div class="form-group row">
-                <label for="filter-comments" class="col-sm-2 col-form-label">Search:</label>
+                <label for="search-input" class="col-sm-2 col-form-label">Search:</label>
                 <div class="col-sm-3">
-                    <input type="text" class="form-control" name="filter-comments" id="filter-comments" style="color: #555555;" placeholder="Search">
+                    <input type="text" class="form-control" name="search-input" id="search-input" style="color: #555555;" placeholder="Search">
                 </div>
                 <label for="filter-comments" class="col-sm-2 col-form-label">By:</label>
                 <div class="col-sm-2">
@@ -180,7 +180,13 @@
             </div>
         </form>
 
-
+        <form action="/reset" method="POST">
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <input class="btn btn-default btn-lg" type="submit" value="Reset"/>
+                </div>
+            </div>
+        </form>
 
         <ul class="list-group" id="comments-list"></ul>
 
