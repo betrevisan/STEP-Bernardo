@@ -41,18 +41,11 @@ import com.google.appengine.api.users.UserServiceFactory;
 import com.google.cloud.translate.Translate;
 import com.google.cloud.translate.TranslateOptions;
 import com.google.cloud.translate.Translation;
+import com.google.appengine.api.datastore.FetchOptions;
+
 
 @WebServlet("/data")
 public final class DataServlet extends HttpServlet {
-
-    @Override
-    public void init() {
-        // Only creates a new AllComments entity if one has not yet been created.
-        Entity allCommentsEntity = getAllCommentsEntity();
-        if (allCommentsEntity == null) {
-            createAllComments();
-        }
-    }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -129,8 +122,6 @@ public final class DataServlet extends HttpServlet {
 
         // Add comment to the datastore.
         createComment(comment, name, email, username);
-        // Increase total of AllComments by 1.
-        changeAllCommentsTotal(1);
 
         response.sendRedirect("/contact.html");
         return;
@@ -138,10 +129,9 @@ public final class DataServlet extends HttpServlet {
 
     // Iterates over a comments query and returns an array of comments.
     private List<Comment> iterateQuery(PreparedQuery results) {
-        Entity allCommentsEntity = getAllCommentsEntity();
         Entity userInfoEntity = getUserInfoEntity();
 
-        long totalComments = (long) allCommentsEntity.getProperty("total");
+        long totalComments = getTotal();
         long page = (long) userInfoEntity.getProperty("page");
         long maxComments = (long) userInfoEntity.getProperty("max");
 
@@ -205,41 +195,6 @@ public final class DataServlet extends HttpServlet {
         datastore.put(commentEntity);
     }
 
-    // Creates an AllComments entity and stores it in the datastore.
-    private void createAllComments() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity allComments = new Entity("AllComments");
-        allComments.setProperty("total", 0);
-        datastore.put(allComments);
-    }
-
-    // Changes the value of the total property in AllComments and updates the datastore.
-    private void changeAllCommentsTotal(int value) {
-        Entity allCommentsEntity = getAllCommentsEntity();
-        long prevTotal = (long) allCommentsEntity.getProperty("total");
-        long newTotal = prevTotal + value;
-        allCommentsEntity.setProperty("total", newTotal);
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(allCommentsEntity);
-    }
-
-    // Accesses the datastore to get the AllComments entity. Returns the entity or null if one does not exist.
-    private Entity getAllCommentsEntity() {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Query queryAllComments = new Query("AllComments");
-        PreparedQuery resultsAllComments = datastore.prepare(queryAllComments);
-
-        // Return null if there are no AllComments entity.
-        if (resultsAllComments.countEntities() == 0) {
-            return null;
-        }
-
-        Iterator<Entity> iterAllComments = resultsAllComments.asIterator();
-        Entity allCommentsEntity = iterAllComments.next(); 
-
-        return allCommentsEntity;
-    }
-
     // Returns the username that corresponds to the id that was given or null if there is no username linked to that id.
     private String getUsername(String id) {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -279,5 +234,11 @@ public final class DataServlet extends HttpServlet {
             defaultEntity.setProperty("searchBy", "name");
             return defaultEntity;
         }
+    }
+
+    private long getTotal() {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Query query = new Query("Comment");
+        return datastore.prepare(query).countEntities(FetchOptions.Builder.withDefaults());
     }
 }

@@ -28,7 +28,6 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
-import com.google.sps.data.AllComments;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
@@ -85,7 +84,7 @@ public final class MaxCommentsServlet extends HttpServlet {
         return userInfoEntity;
     }
 
-    // Changes the value of the maximum number of comment per page property in AllComments and updates the datastore
+    // Changes the value of the maximum number of comment per page property
     private void changeUserInfoMax(long newMax) {
         Entity userInfoEntity = getUserInfoEntity();
 
