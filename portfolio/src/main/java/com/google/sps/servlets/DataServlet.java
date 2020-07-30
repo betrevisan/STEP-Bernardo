@@ -146,8 +146,6 @@ public final class DataServlet extends HttpServlet {
         List<Comment> comments = new ArrayList<>();
         Iterator<Entity> iter = results.asIterator();
 
-        Translate translate = TranslateOptions.getDefaultInstance().getService();
-
         // Iterates over the results until the results are less than the limit on comments or until the end of all results.
         for (int count = 0; count < (maxComments * page) && count < totalComments; count++) {
             if (iter.hasNext()) {
@@ -155,25 +153,10 @@ public final class DataServlet extends HttpServlet {
 
                 // Only add comment when it is part of the page the user is currently in.
                 if (count >= (maxComments * (page - 1))) {
-                    long id = entity.getKey().getId();
-                    String content = (String) entity.getProperty("content");
-                    long time = (long) entity.getProperty("time");
-                    long thumbsup = (long) entity.getProperty("thumbsup");
-                    long thumbsdown = (long) entity.getProperty("thumbsdown");
-                    String name = (String) entity.getProperty("name");
-                    String email = (String) entity.getProperty("email");
-                    String username = (String) entity.getProperty("username");
+                    Comment comment = new Comment(entity);
 
-                    String translatedComment = null;
-                    try {
-                        // Translate comment
-                        Translation translation = translate.translate(content, Translate.TranslateOption.targetLanguage(language));
-                        translatedComment = translation.getTranslatedText();
-                    } catch (RuntimeException e) {
-                        translatedComment = content;
-                    }
+                    comment.translateComment(language);
 
-                    Comment comment = new Comment(id, translatedComment, time, thumbsup, thumbsdown, name, email, username);
                     comments.add(comment);
                 }
             }

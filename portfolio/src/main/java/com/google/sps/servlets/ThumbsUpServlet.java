@@ -27,11 +27,19 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.Comment;
+import com.google.sps.data.UserInfo;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Query.FilterOperator;
+import com.google.appengine.api.datastore.Query.Filter;
+import com.google.appengine.api.datastore.Query.FilterPredicate;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.appengine.api.datastore.Transaction;
+import com.google.appengine.api.datastore.TransactionOptions;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
 @WebServlet("/thumbsup-data")
@@ -39,48 +47,117 @@ public final class ThumbsUpServlet extends HttpServlet {
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // Get comment's id (which was passed as a parameter).
-        long id = Long.parseLong(Optional.ofNullable(request.getParameter("id")).orElse(null));
+        UserService userService = UserServiceFactory.getUserService();
+        if (!userService.isUserLoggedIn()) {
+            response.sendRedirect("/contact.html");
+            return;
+        }
+
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+
+        TransactionOptions options = TransactionOptions.Builder.withXG(true);
+        Transaction txn = datastore.beginTransaction(options);
+        try {
+            Entity userInfoEntity = getUserInfoEntity();
+            UserInfo userInfo = new UserInfo(userInfoEntity);
+
+            // Get comment's id (which was passed as a parameter).
+            long id = Long.parseLong(request.getParameter("id"));
+
+            Entity commentEntity = getCommentEntity(id);
+            if (commentEntity == null) {
+                response.setContentType("text/html;");
+                response.getWriter().println("Unable to get comment.");
+                return;
+            }
+
+            Comment comment = new Comment(commentEntity);
+
+            if (userInfo.isLikedComment(commentEntity)) {
+                comment.decrementThumbsup();
+                comment.decrementPopularity();
+                userInfo.removeFromLikedComments(commentEntity);
+            } else {
+                comment.incrementThumbsup();
+                comment.incrementPopularity();
+                userInfo.addToLikedComments(commentEntity);
+            }
+
+            comment.updateDatabase(commentEntity, txn);
+            userInfo.updateDatabase(userInfoEntity, txn);
+
+            txn.commit();
+        } finally {
+            if (txn.isActive()) {
+                txn.rollback();
+            }
+        }
+
+        response.sendRedirect("/contact.html");
+        return;
+    }
+
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getCommentEntity(long id) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // Using the id, get the comment's key.
         Key commentEntityKey;
         try {
             commentEntityKey = KeyFactory.createKey("Comment", id);
         } catch(NullPointerException e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment's key.");
-            return;
+            return null;
         }
-
-        // Instantiate datastore.
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         // Get the comment entity using its key.
         Entity commentEntity;
         try {
             commentEntity = datastore.get(commentEntityKey);
         } catch(EntityNotFoundException e) {
-            response.setContentType("text/html;");
-            response.getWriter().println("Unable to get comment.");
-            return;
+            return null;
         }
 
-        // Get the previous thumbs up value.
-        long prevThumbsUp = (long) commentEntity.getProperty("thumbsup");
-        // Get the previous popularity value.
-        long prevPopularity = (long) commentEntity.getProperty("popularity");
-        long newThumbsUp = prevThumbsUp + 1;
-        long newPopularity = prevPopularity + 1;
-        
-        // Update the thumbs up property to be the previous value plus one
-        commentEntity.setProperty("thumbsup", newThumbsUp);
-        // Update the popularity property to be the previous one plus one.
-        commentEntity.setProperty("popularity", newPopularity);
+        return commentEntity;
+    }
 
-        // Add the updated entity back in the datastore.
-        datastore.put(commentEntity);
+    // Accesses the datastore to get the UserInfo entity. Returns the entity or null if one does not exist.
+    private Entity getUserInfoEntity() {
+        UserService userService = UserServiceFactory.getUserService();
+        String id = userService.getCurrentUser().getUserId();
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Filter queryFilter = new FilterPredicate("id", Query.FilterOperator.EQUAL, id);
+        Query query = new Query("UserInfo").setFilter(queryFilter);
 
-        response.sendRedirect("/contact.html");
-        return;
+        return datastore.prepare(query).asSingleEntity();
+    }
+
+    private void addToLikedComments(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+
+        if (liked == null) {
+            liked =  new ArrayList<Key>();
+        }
+
+        liked.add(commentEntity.getKey());
+        userInfoEntity.setProperty("liked", liked);
+        datastore.put(userInfoEntity);
+    }
+
+    private void removeFromLikedComments(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+
+        liked.remove(commentEntity.getKey());
+        userInfoEntity.setProperty("liked", liked);
+        datastore.put(userInfoEntity);
+    }
+
+    private boolean isLikedComment(Entity userInfoEntity, Entity commentEntity) {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<Key> liked = (ArrayList<Key>) userInfoEntity.getProperty("liked");
+        Key commentKey = commentEntity.getKey();
+
+        return liked != null && liked.contains(commentKey);
     }
 }
