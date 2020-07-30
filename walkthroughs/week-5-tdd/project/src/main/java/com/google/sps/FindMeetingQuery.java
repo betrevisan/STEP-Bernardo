@@ -86,7 +86,7 @@ public final class FindMeetingQuery {
         boolean first = true;
         for (TimeRange conflict : conflicts) {
             // If this is the first conflict seen, then set the start and end variables as the start and end of that conflict.
-            if (first == true) {
+            if (first) {
                 first = false;
                 start = conflict.start();
                 end = conflict.end();
